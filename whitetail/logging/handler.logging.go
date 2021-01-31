@@ -37,8 +37,9 @@ type Log struct {
 }
 
 type LogRequestInput struct {
-    LineLimit   string `json:"limit"`
-    KeywordList string `json:"keyword-list"`
+    LineLimit   string   `json:"limit"`
+    KeywordList string   `json:"keyword-list"`
+    LogLevels   []string `json:"log-levels"`
 }
 
 var DB *gorm.DB
@@ -106,7 +107,7 @@ func GetAllLogs() []Log {
 	return logs
 }
 
-func GetLogsFromIndex(keyString, service string, limit int) []Log {
+func GetLogsFromIndex(keyString, service string, limit int, logLevels []string) []Log {
     keys := strings.Split(keyString, ",")
     logs := []Log{}
     for _, key := range keys {
@@ -132,10 +133,23 @@ func GetLogsFromIndex(keyString, service string, limit int) []Log {
     sort.Slice(logs[:], func(i, j int) bool {
         return logs[i].Timestamp < logs[j].Timestamp
     })
-    if limit < len(logs) {
-        return logs[len(logs) - limit:]
+    filteredLogs := []Log{}
+    for _, log := range logs {
+        levelMatch := false
+        for _, level := range logLevels {
+            if log.Level == level {
+                levelMatch = true
+                break
+            }
+        }
+        if levelMatch == true {
+            filteredLogs = append(filteredLogs, log)
+        }
     }
-    return logs
+    if limit < len(filteredLogs) {
+        return filteredLogs[len(filteredLogs) - limit:]
+    }
+    return filteredLogs
 }
 
 func DeleteLogByID(id string) error{
@@ -156,20 +170,34 @@ func GetLogByID(id string) (*Log, error) {
 	return &log, nil
 }
 
-func GetLogsByService(keyString, service string, limit int) []Log {
+func GetLogsByService(keyString, service string, limit int, logLevels []string) []Log {
     var logs []Log
     
     if keyString != "" {
-        logs = GetLogsFromIndex(keyString, service, limit)
+        logs = GetLogsFromIndex(keyString, service, limit, logLevels)
     } else {
         DB.Where("service = ?", service).Find(&logs)
 
         sort.Slice(logs[:], func(i, j int) bool {
             return logs[i].Timestamp < logs[j].Timestamp
         })
-        if limit < len(logs) {
-            return logs[len(logs) - limit:]
+        filteredLogs := []Log{}
+        for _, log := range logs {
+            levelMatch := false
+            for _, level := range logLevels {
+                if log.Level == level {
+                    levelMatch = true
+                    break
+                }
+            }
+            if levelMatch == true {
+                filteredLogs = append(filteredLogs, log)
+            }
         }
+        if limit < len(filteredLogs) {
+            return filteredLogs[len(filteredLogs) - limit:]
+        }
+        return filteredLogs
     }
     return logs
 }

@@ -16,19 +16,19 @@ build-linux:
 	mkdir dist
 	cd whitetail; env GOOS=linux GOARCH=amd64 go build -v -o whitetail
 	mv whitetail/whitetail dist/whitetail
-	cp -r resources/templates dist/templates
+	cp -r resources/* dist
 
 build-windows:
 	rm -rf dist || true
 	mkdir dist
 	cd whitetail; env GOOS=windows GOARCH=amd64 go build -v -o whitetail
 	mv whitetail/whitetail dist/whitetail
-	cp -r resources/templates dist/templates
+	cp -r resources/* dist
 
 build-docker:
 	make build-linux
-	docker build -t modelop/whitetail:dev-bp .
-	docker push modelop/whitetail:dev-bp
+	docker build -t johncarterodg/whitetail:$(TAG) .
+	docker push johncarterodg/whitetail:$(TAG)
 
 run: 
 	cd dist; ./whitetail

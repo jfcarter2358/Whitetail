@@ -4,11 +4,14 @@
 Whitetail is a lightweight alternative to ELK for non-intensive applications. It is built with containerization in mind for a non-resource intensive log viewer with basic search capabilites.
 
 ## TO DO
-- [] Add settings page
-- [] Add docker file
-- [] Add query language so that it's not just a keyword search on the logs page
-- [] Add a log refresh button on the logs page
-- [] Any other tasks I'll inevitably think of later
+- [ ] Add settings page
+- [x] Add docker file
+- [x] Add kubernetes manifest
+- [ ] Add query language so that it's not just a keyword search on the logs page
+- [x] Add a log refresh button on the logs page
+- [x] Add filtered by log level
+- [ ] Add log age cleanup
+- [ ] Any other tasks I'll inevitably think of later
 
 ## Contact
 Whitetail is written by John Carter

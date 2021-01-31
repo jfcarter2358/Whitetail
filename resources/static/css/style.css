@@ -5,7 +5,7 @@
 .whitetail-diagonal-shadow {box-shadow: 2px 2px #444444;}
 
 /* primary brand colors */
-.whitetail-dark-brown,.whitetail-hover-dark-brown:hover{color:#000!important;background-color:#524632!important}
+.whitetail-dark-brown,.whitetail-hover-dark-brown:hover{color:#fff!important;background-color:#524632!important}
 .whitetail-brown,.whitetail-hover-brown:hover{color:#000!important;background-color:#8F7E4F!important}
 .whitetail-sage,.whitetail-hover-sage:hover{color:#000!important;background-color:#C3C49E!important}
 
@@ -17,7 +17,7 @@
 .whitetail-red,.whitetail-hover-red:hover{color:#fff!important;background-color:#95190C!important}
 .whitetail-orange,.whitetail-hover-orange:hover{color:#000!important;background-color:#E24E1B!important}
 .whitetail-yellow,.whitetail-hover-yellow:hover{color:#000!important;background-color:#E3B505!important}
-.whitetail-green,.whitetail-hover-forest-green:hover{color:#000!important;background-color:#4F772D!important}
+.whitetail-green,.whitetail-hover-forest-green:hover{color:#fff!important;background-color:#4F772D!important}
 .whitetail-cyan,.whitetail-hover-blue:hover{color:#000!important;background-color:#107E7D!important}
 .whitetail-blue,.whitetail-hover-blue:hover{color:#fff!important;background-color:#2B50AA!important}
 .whitetail-purple,.whitetail-hover-yellow:hover{color:#000!important;background-color:#610345 !important}

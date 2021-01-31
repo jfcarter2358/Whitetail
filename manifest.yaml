@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: whitetail
+    service: whitetail
+  name: whitetail
+spec:
+  selector:
+    matchLabels:
+      app: whitetail
+      service: whitetail
+  template:
+    metadata:
+      labels:
+        app: whitetail
+        service: whitetail
+      name: whitetail
+    spec:
+      containers:
+      - image: johncarterodg/whitetail:dev
+        imagePullPolicy: Always
+        name: whitetail
+        ports:
+        - containerPort: 9001
+          name: wt-http
+          protocol: TCP
+        - containerPort: 9002
+          name: wt-tcp
+          protocol: TCP
+        - containerPort: 9003
+          name: wt-udp
+          protocol: UDP
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /whitetail/config
+          name: config-vol
+      hostname: whitetail
+      restartPolicy: Always
+      volumes:
+      - configMap:
+          name: config-configmap
+        name: config-vol
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: whitetail
+    service: whitetail
+  name: whitetail
+spec:
+  ports:
+  - name: wt-http
+    port: 9001
+    protocol: TCP
+    targetPort: 9001
+  - name: wt-tcp
+    port: 9002
+    protocol: TCP
+    targetPort: 9002
+  # - name: wt-udp
+  #   port: 9003
+  #   protocol: UDP
+  #   targetPort: 9003
+  selector:
+    app: whitetail
+    service: whitetail
+  sessionAffinity: None
+  type: LoadBalancer
+---
+apiVersion: v1
+data:
+  config.json: |-
+    {
+      "http-port": 9001,
+      "tcp-port": 9002,
+      "udp-port": 9003,
+      "basepath": "",
+      "database": {
+        "type": "postgres",
+        "host": "postgres",
+        "port": 5432,
+        "username": "postgres",
+        "password": "1kd4!/74qxvzaF3"
+      },
+      "logging": {
+        "max-age": "2d"
+      }
+    }
+kind: ConfigMap
+metadata:
+  name: config-configmap

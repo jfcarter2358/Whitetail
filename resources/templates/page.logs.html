@@ -41,23 +41,38 @@ window.setInterval(function() {
 <div id="contents" class="w3-container">
 	<div class="w3-container w3-card whitetail-sage w3-padding">
 		<div class="w3-row-padding">
-			<div class="w3-third">
+			<div class="w3-col s2">
 				<input class="w3-check" id="live_view" type="checkbox">
 				<label>Live View</label>
 			</div>
-			<div class="w3-third">
+			<div class="w3-col s2">
 				<label>Line Limit</label>
 				<input id="line_limit" type="text" value=100>
 			</div>
-			<div class="w3-third">
+			<div class="w3-col s2">
 				<div class="w3-dropdown-click w3-right">
-					<button id="services_button" onclick="toggleDropdown('services_dropdown')" class="w3-button whitetail-brown" style="width:200px;">Select a Service</button>
+					<button id="level_button" onclick="toggleDropdown('level_dropdown')" class="w3-button whitetail-brown whitetail-hover-dark-brown" style="width:200px;">Filter by Log Level</button>
+					<div id="level_dropdown" class="w3-dropdown-content w3-bar-block w3-border">
+						<button id="INFO" class="w3-bar-item w3-button whitetail-green whitetail-hover-sage" onclick="filterLevel('{{ $.basePath }}', 'INFO')">INFO</button>
+						<button id="DEBUG" class="w3-bar-item w3-button whitetail-green whitetail-hover-sage" onclick="filterLevel('{{ $.basePath }}', 'DEBUG')">DEBUG</button>
+						<button id="WARN" class="w3-bar-item w3-button whitetail-green whitetail-hover-sage" onclick="filterLevel('{{ $.basePath }}', 'WARN')">WARN</button>
+						<button id="TRACE" class="w3-bar-item w3-button whitetail-green whitetail-hover-sage" onclick="filterLevel('{{ $.basePath }}', 'TRACE')">TRACE</button>
+						<button id="ERROR" class="w3-bar-item w3-button whitetail-green whitetail-hover-sage" onclick="filterLevel('{{ $.basePath }}', 'ERROR')">ERROR</button>
+					</div>
+				</div>
+			</div>
+			<div class="w3-col s3">
+				<div class="w3-dropdown-click w3-right">
+					<button id="services_button" onclick="toggleDropdown('services_dropdown')" class="w3-button whitetail-brown whitetail-hover-dark-brown" style="width:200px;">Select a Service</button>
 					<div id="services_dropdown" class="w3-dropdown-content w3-bar-block w3-border">
 					{{ range $elem_val := $.services }}
-						<a href="#" class="w3-bar-item w3-button" onclick="changeService('{{ $.basePath }}', '{{ $elem_val }}')">{{ $elem_val }}</a>
+						<button class="w3-bar-item w3-button whitetail-hover-sage" onclick="changeService('{{ $.basePath }}', '{{ $elem_val }}')">{{ $elem_val }}</button>
 					{{ end }}
 					</div>
 				</div>
+			</div>
+			<div class="w3-col s3">
+				<button class="w3-button whitetail-brown whitetail-hover-dark-brown w3-right" onclick="refreshLogs('{{ .basePath }}')" style="width:200px;">Refresh Logs</button>
 			</div>
 		</div>
 		<div class="w3-row-padding">

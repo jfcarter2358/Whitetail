@@ -23,9 +23,9 @@ func GetLogsByService(c *gin.Context) {
 	lineLimit, err := strconv.Atoi(input.LineLimit)
 	
 	if err == nil {
-		logs = Logging.GetLogsByService(input.KeywordList, service, lineLimit)
+		logs = Logging.GetLogsByService(input.KeywordList, service, lineLimit, input.LogLevels)
 	} else {
-		logs = Logging.GetLogsByService(input.KeywordList, service, 1000)
+		logs = Logging.GetLogsByService(input.KeywordList, service, 1000, input.LogLevels)
 	}
 
 	logMessages := []string{}
