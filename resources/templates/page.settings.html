@@ -1,0 +1,22 @@
+<!-- page.setttings.html -->
+
+{{ template "common.header.html" .}}
+<!-- give us the ability to add page specific things to the head of the document here -->
+<!-- i.e. loading a page specific js file or stylesheet -->
+<script src="/resources/js/settings.js"></script>
+
+</head>
+<body class="w3-light-grey">
+{{ template "common.sidebar.html" . }}
+<div id="main" style="margin-left:15%;">
+  {{ template "common.menu.html" . }}
+  <br>
+  <div id="contents" class="w3-container">
+    <h1>SETTINGS</h1>
+    <br>
+    <br>
+  </div>
+</div>
+
+<!--Embed the footer.html template at this location-->
+{{ template "common.footer.html" .}}

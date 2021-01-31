@@ -1,0 +1,76 @@
+<!-- page.logs.html -->
+
+{{ template "common.header.html" .}}
+<!-- give us the ability to add page specific things to the head of the document here -->
+<!-- i.e. loading a page specific js file or stylesheet -->
+<script src="/resources/js/logs.js"></script>
+
+<script>
+window.setInterval(function() {
+	getLogs("{{ .basePath }}")
+}, 1000);
+</script>
+<style>
+	.WARN {
+        color:#E24E1B;
+    }
+
+    .INFO {
+        color:#4F772D;
+    }
+
+    .DEBUG {
+        color:#2B50AA;
+    }
+
+    .ERROR {
+        color:#95190C;
+    }
+
+    .TRACE {
+        color: #610345
+    }
+</style>
+
+</head>
+<body class="whitetail-white">
+{{ template "common.sidebar.html" . }}
+<div id="main" style="margin-left:15%;">
+{{ template "common.menu.html" . }}
+<br>
+<div id="contents" class="w3-container">
+	<div class="w3-container w3-card whitetail-sage w3-padding">
+		<div class="w3-row-padding">
+			<div class="w3-third">
+				<input class="w3-check" id="live_view" type="checkbox">
+				<label>Live View</label>
+			</div>
+			<div class="w3-third">
+				<label>Line Limit</label>
+				<input id="line_limit" type="text" value=100>
+			</div>
+			<div class="w3-third">
+				<div class="w3-dropdown-click w3-right">
+					<button id="services_button" onclick="toggleDropdown('services_dropdown')" class="w3-button whitetail-brown" style="width:200px;">Select a Service</button>
+					<div id="services_dropdown" class="w3-dropdown-content w3-bar-block w3-border">
+					{{ range $elem_val := $.services }}
+						<a href="#" class="w3-bar-item w3-button" onclick="changeService('{{ $.basePath }}', '{{ $elem_val }}')">{{ $elem_val }}</a>
+					{{ end }}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="w3-row-padding">
+			<label>Keyword list</label>
+			<input class="w3-input" type="text" id="keyword_list">
+		</div>
+	</div>
+	<br>
+	<div class="w3-card whitetail-sage w3-container" id="logs">
+	</div>
+	<br>
+</div>
+</div>
+
+<!--Embed the footer.html template at this location-->
+{{ template "common.footer.html" .}}

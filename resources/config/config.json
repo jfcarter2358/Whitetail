@@ -1,0 +1,16 @@
+{
+    "http-port": 9001,
+    "tcp-port": 9002,
+    "udp-port": 9003,
+    "basepath": "",
+    "database": {
+        "type": "postgres",
+        "host": "localhost",
+        "port": 5432,
+        "username": "postgres",
+        "password": "1kd4!/74qxvzaF3"
+    },
+    "logging": {
+        "max-age": "2d"
+    }
+}
