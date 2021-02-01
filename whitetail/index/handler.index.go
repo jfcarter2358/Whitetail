@@ -3,12 +3,14 @@ package Index
 import (
     "fmt"
     "strings"
-    "github.com/jinzhu/gorm"
-    _ "github.com/jinzhu/gorm/dialects/postgres"
+    "gorm.io/gorm"
+    "gorm.io/driver/sqlite"
+    "gorm.io/driver/postgres"
     "log"
     "net/url"
     "errors"
 	"regexp"
+	"whitetail/config"
 )
 
 type Index struct {
@@ -21,15 +23,22 @@ var DB *gorm.DB
 
 /* -- Database interactions -- */
 
-func ConnectDataBase(db_type, db_user, db_pass, db_host, db_port string) {
-	dsn := url.URL{
-		User:     url.UserPassword(db_user, db_pass),
-		Scheme:   db_type,
-		Host:     fmt.Sprintf("%s:%s", db_host, db_port),
-		Path:     "whitetail",
-		RawQuery: (&url.Values{"sslmode": []string{"disable"}}).Encode(),
-	}
-	database, err := gorm.Open("postgres", dsn.String())
+func ConnectDataBase(db_type string, postgresConfig *Config.PostgresConfigObject, sqliteConfig *Config.SqliteConfigObject) {
+    var err error
+    var database *gorm.DB
+
+    if db_type == "postgres" {
+        dsn := url.URL{
+            User:     url.UserPassword(postgresConfig.Username, postgresConfig.Password),
+            Scheme:   db_type,
+            Host:     fmt.Sprintf("%s:%d", postgresConfig.Host, postgresConfig.Port),
+            Path:     "whitetail",
+            RawQuery: (&url.Values{"sslmode": []string{"disable"}}).Encode(),
+        }
+    	database, err = gorm.Open(postgres.Open(dsn.String()), &gorm.Config{})
+    } else if db_type == "sqlite" {
+        database, err = gorm.Open(sqlite.Open(sqliteConfig.Path), &gorm.Config{})
+    }
 
 	if err != nil {
 		log.Println(err)
@@ -38,7 +47,7 @@ func ConnectDataBase(db_type, db_user, db_pass, db_host, db_port string) {
 
 	database.AutoMigrate(&Index{})
 
-	DB = database
+    DB = database
 	
 	GetAllIndices()
 }

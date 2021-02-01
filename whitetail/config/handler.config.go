@@ -10,20 +10,29 @@ import (
 )
 
 type ConfigObject struct {
-	HTTPPort int    `json:"http-port"`
-	TCPPort  int    `json:"tcp-port"`
-	UDPPort  int    `json:"udp-port"`
-	BasePath string `json:"basepath"`
+	HTTPPort int                  `json:"http-port"`
+	TCPPort  int                  `json:"tcp-port"`
+	UDPPort  int                  `json:"udp-port"`
+	BasePath string               `json:"basepath"`
 	Database DatabaseConfigObject `json:"database"`
-	Logging LoggingConfigObject `json:"logging"`
+	Logging  LoggingConfigObject  `json:"logging"`
 }
 
 type DatabaseConfigObject struct {
-	Type     string `json:"type"`
+	Type     string
+	Postgres *PostgresConfigObject `json:"postgres"`
+	Sqlite   *SqliteConfigObject   `json:"sqlite"`
+}
+
+type PostgresConfigObject struct {
 	Host     string `json:"host"`
 	Port     int    `json:"port"`
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+type SqliteConfigObject struct {
+	Path string `json:"path"`
 }
 
 type LoggingConfigObject struct { 
@@ -48,5 +57,17 @@ func ReadConfigFile() *ConfigObject{
 
 	// defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
+	log.Println(config.Database.Postgres)
+	log.Println(config.Database.Sqlite)
+
+	if config.Database.Postgres != nil {
+		log.Println("postgres")
+		config.Database.Type = "postgres"
+	} else if config.Database.Sqlite != nil {
+		log.Println("sqlite")
+		config.Database.Type = "sqlite"
+	} else {
+		panic("No database config found")
+	}
 	return &config
 }

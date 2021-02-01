@@ -4,8 +4,11 @@
     "udp-port": 9003,
     "basepath": "",
     "database": {
-        "sqlite": {
-            "path": "./data/whitetail.db"
+        "postgres": {
+            "host": "localhost",
+            "port": 5432,
+            "username": "postgres",
+            "password": "1kd4!/74qxvzaF3"
         }
     },
     "logging": {

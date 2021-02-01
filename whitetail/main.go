@@ -22,17 +22,9 @@ func main() {
 	config = Config.ReadConfigFile()
 	routerPort := ":" + strconv.Itoa(config.HTTPPort)
 
-	db_type := config.Database.Type
-	db_host := config.Database.Host
-	db_port := strconv.Itoa(config.Database.Port)
-	db_user := config.Database.Username
-	db_pass := config.Database.Password
-
 	// Read in the compass data from the json file
-	Logging.ConnectDataBase(db_type, db_user, db_pass, db_host, db_port)
-	Index.ConnectDataBase(db_type, db_user, db_pass, db_host, db_port)
-	log.Print("Running on port: " + routerPort)
-
+	Logging.ConnectDataBase(config.Database.Type, config.Database.Postgres, config.Database.Sqlite)
+	Index.ConnectDataBase(config.Database.Type, config.Database.Postgres, config.Database.Sqlite)
 	basePath := config.BasePath
 	log.Print("Running with base path: " + basePath)
 

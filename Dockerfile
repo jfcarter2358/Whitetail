@@ -2,6 +2,7 @@ FROM ubuntu:18.04
 
 RUN apt-get update
 RUN mkdir /whitetail
+RUN mkdir /whitetail/data
 
 # add whitetail distribution
 ADD dist/whitetail /whitetail/whitetail
