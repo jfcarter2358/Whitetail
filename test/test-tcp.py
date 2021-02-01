@@ -11,7 +11,7 @@ LoggerName string `json:"logger_name"`
 Level      string `json:"level"`
 StackTrace string `json:"stack_trace"`
 '''
-message = sys.argv[3]
+message = sys.argv[2]
 service = sys.argv[1]
 logger_name = 'test'
 stack_trace = ''

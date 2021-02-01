@@ -22,12 +22,19 @@ import (
 )
 
 type LogMessageInput struct {
-	Timestamp  string `json:"@timestamp"`
-	Message    string `json:"message"`
-    Service    string `json:"appName"`
-    LoggerName string `json:"logger_name"`
-    Level      string `json:"level"`
-    StackTrace string `json:"stack_trace"`
+	Timestamp  string      `json:"@timestamp"`
+	Message    string      `json:"message"`
+    Service    string      `json:"appName"`
+    LoggerName string      `json:"logger_name"`
+    Level      string      `json:"level"`
+    StackTrace string      `json:"stack_trace"`
+    Fields     *FieldInput `json:"fields"`
+}
+
+type FieldInput struct {
+    Level      string `json:"severity"`
+    LoggerName string `json:"application"`
+    Service    string `json:"hostname"`
 }
 
 type Log struct {
@@ -258,12 +265,20 @@ func StartTCPServer(conn_port int) {
 }
 
 func StartUDPServer(conn_port int) {
-    ServerConn, _ := net.ListenUDP("udp", &net.UDPAddr{IP:[]byte{},Port:conn_port,Zone:""})
+    ServerAddr, err := net.ResolveUDPAddr("udp", ":" + strconv.Itoa(conn_port))
+    if err != nil {
+        panic(err)
+    }
+    ServerConn, err := net.ListenUDP("udp", ServerAddr)
+    if err != nil {
+        panic(err)
+    }
     defer ServerConn.Close()
     fmt.Println("Listening to UDP on " + ":" + strconv.Itoa(conn_port))
     buf := make([]byte, 1024)
     for {
         n, _, _ := ServerConn.ReadFromUDP(buf)
+        log.Println("Got UDP data")
         parseData(string(buf[0:n]))
     }
 }
@@ -272,7 +287,6 @@ func parseData(data string) {
     messages := strings.Split(data, "\n")
     // messages[0] = leftover + messages[0]
     for i := 0; i < len(messages); i++ {
-        log.Println(messages[i])
         shouldParse := true
         messages[i] = strings.TrimSpace(messages[i])
         messages[i] = strings.TrimSuffix(messages[i], "\n")
@@ -291,24 +305,31 @@ func parseData(data string) {
                 fmt.Println(readErr)
             }
 
-            if input.Timestamp == "" {
-                input.Timestamp = time.Now().Format("2006-01-02T15:04:05")
+            if input.Fields != nil {
+                input.Service = input.Fields.Service
+                input.Level = strings.ToUpper(input.Fields.Level)
+                input.LoggerName = input.Fields.LoggerName
             }
-
-            formatted := formatLogMessage(input)
-
-            contained := false
-            for _, service := range Services {
-                if service == input.Service {
-                    contained = true
-                    break
+            if input.Service != "" {
+                if input.Timestamp == "" {
+                    input.Timestamp = time.Now().Format("2006-01-02T15:04:05")
                 }
-            }
-            if contained == false {
-                Services = append(Services, input.Service)
-            }
 
-            CreateNewLog(formatted, input.Level, input.Timestamp, input.Service, input.Message)
+                formatted := formatLogMessage(input)
+                    
+                contained := false
+                for _, service := range Services {
+                    if service == input.Service {
+                        contained = true
+                        break
+                    }
+                }
+                if contained == false {
+                    Services = append(Services, input.Service)
+                }
+            
+                CreateNewLog(formatted, input.Level, input.Timestamp, input.Service, input.Message)
+            }
         }
 	}
 }
