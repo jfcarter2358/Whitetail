@@ -1,0 +1,20 @@
+apiVersion: v1
+data:
+  config.json: |-
+    {
+      "http-port": 9001,
+      "tcp-port": 9002,
+      "udp-port": 9003,
+      "basepath": "",
+      "database": {
+        "sqlite": {
+          "path": "./data/whitetail.db"
+        }
+      },
+      "logging": {
+          "max-age": "2d"
+      }
+    }
+kind: ConfigMap
+metadata:
+  name: config-configmap

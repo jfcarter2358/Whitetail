@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: whitetail
+    service: whitetail
+  name: whitetail
+spec:
+  ports:
+  - name: wt-http
+    port: 9001
+    protocol: TCP
+    targetPort: 9001
+  - name: wt-tcp
+    port: 9002
+    protocol: TCP
+    targetPort: 9002
+  - name: wt-udp
+    port: 9003
+    protocol: UDP
+    targetPort: 9003
+  selector:
+    app: whitetail
+    service: whitetail
+  sessionAffinity: None
+  type: NodePort

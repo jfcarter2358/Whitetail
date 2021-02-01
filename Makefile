@@ -7,23 +7,17 @@ dependencies:
 build-darwin:
 	rm -rf dist || true
 	mkdir dist
-	cd whitetail; env GOOS=darwin GOARCH=amd64 go build -v -o whitetail
+	cd whitetail; env GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build -v -o whitetail
 	mv whitetail/whitetail dist/whitetail
 	cp -r resources/* dist
 	mkdir dist/data
 
 build-linux:
+	# if building from a Mac you must install this first:
+	# brew install FiloSottile/musl-cross/musl-cross
 	rm -rf dist || true
 	mkdir dist
-	cd whitetail; env GOOS=linux GOARCH=amd64 go build -v -o whitetail
-	mv whitetail/whitetail dist/whitetail
-	cp -r resources/* dist
-	mkdir dist/data
-
-build-windows:
-	rm -rf dist || true
-	mkdir dist
-	cd whitetail; env GOOS=windows GOARCH=amd64 go build -v -o whitetail
+	cd whitetail; env CC=x86_64-linux-musl-gcc CXX=x86_64-linux-musl-g++ GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -ldflags "-linkmode external -extldflags -static" -v -o whitetail
 	mv whitetail/whitetail dist/whitetail
 	cp -r resources/* dist
 	mkdir dist/data
