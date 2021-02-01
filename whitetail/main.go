@@ -9,6 +9,7 @@ import (
 	"whitetail/logging"
 	"whitetail/config"
 	"whitetail/index"
+	"whitetail/page"
 	"strconv"
 )
 
@@ -21,6 +22,8 @@ func main() {
 
 	config = Config.ReadConfigFile()
 	routerPort := ":" + strconv.Itoa(config.HTTPPort)
+
+	Page.InitConfig(config)
 
 	// Read in the compass data from the json file
 	Logging.ConnectDataBase(config.Database.Type, config.Database.Postgres, config.Database.Sqlite)

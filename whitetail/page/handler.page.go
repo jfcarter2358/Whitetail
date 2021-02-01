@@ -3,44 +3,48 @@
 package Page
 
 import (
-	"os"
+	// "log"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"whitetail/logging"
+	"whitetail/config"
 )
 
+var config *Config.ConfigObject
+
+func InitConfig(newConfig *Config.ConfigObject) {
+	config = newConfig
+}
+
 func RedirectIndexPage(c *gin.Context) {
-	basePath := os.Getenv("BASEPATH")
-	c.Redirect(301, basePath + "/ui/home")
+	// log.Println(config.BasePath)
+	c.Redirect(301, config.BasePath + "/ui/home")
 }
 
 func ShowHomePage(c *gin.Context) {
-	basePath := os.Getenv("BASEPATH")
 	// Render the logs-selection.html page
 	render(c, gin.H{
 		"title":   "Home",
-		"basePath": basePath,
+		"basePath": config.BasePath,
 		"location": "Home"}, 
 		"page.index.html")
 }
 
 func ShowLogsPage(c *gin.Context) {
-	basePath := os.Getenv("BASEPATH")
 	// Render the logs-selection.html page
 	render(c, gin.H{
 		"title":   "Logs",
-		"basePath": basePath,
+		"basePath": config.BasePath,
 		"location": "Logs",
 		"services": Logging.Services}, 
 		"page.logs.html")
 }
 
 func ShowSettingsPage(c *gin.Context) {
-	basePath := os.Getenv("BASEPATH")
 	// Render the logs-selection.html page
 	render(c, gin.H{
 		"title":   "Settings",
-		"basePath": basePath,
+		"basePath": config.BasePath,
 		"location": "Settings"}, 
 		"page.settings.html")
 }

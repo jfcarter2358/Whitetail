@@ -4,13 +4,13 @@ package main
 
 import (
 	"whitetail/api"
-	"whitetail/Page"
+	"whitetail/page"
 )
 
 func initializeRoutes(basePath string) {
-	router.Static("/resources/css", "./static/css")
-	router.Static("/resources/img", "./static/img")
-	router.Static("/resources/js", "./static/js")
+	router.Static(basePath + "/resources/css", "./static/css")
+	router.Static(basePath + "/resources/img", "./static/img")
+	router.Static(basePath + "/resources/js", "./static/js")
 
 	router.GET(basePath + "/", Page.RedirectIndexPage)
 

@@ -1,17 +1,17 @@
 <div class="w3-sidebar w3-bar-block w3-card w3-white w3-border w3-border-grey" id="sidebar" style="width:15%;display:block">
     <div class="w3-bar-item w3-large whitetail-sage" style="cursor:default;">
-        <img src="/resources/img/whitetail_logo.png" width="100%;">
+        <img src="{{ .basePath }}/resources/img/whitetail_logo.png" width="100%;">
     </div>
     <!-- <button class="w3-bar-item w3-button w3-large w3-dark-grey" onclick="w3_close()">Close &times;</button> -->
-    <a href="/ui/home" class="w3-bar-item w3-button whitetail-hover-brown">
+    <a href="{{ .basePath }}/ui/home" class="w3-bar-item w3-button whitetail-hover-brown">
         <i class="fas fa-home"></i>
         <p style="display:inline-block;margin-left:5px;margin-top:1px;margin-bottom:1px;">Home</p>
     </a>
-    <a href="/ui/logs" class="w3-bar-item w3-button whitetail-hover-brown">
+    <a href="{{ .basePath }}/ui/logs" class="w3-bar-item w3-button whitetail-hover-brown">
         <i class="fas fa-server"></i>
         <p style="display:inline-block;margin-left:5px;margin-top:1px;margin-bottom:1px;">Logs</p
             ></a>
-    <a href="/ui/settings" class="w3-bar-item w3-button whitetail-hover-brown">
+    <a href="{{ .basePath }}/ui/settings" class="w3-bar-item w3-button whitetail-hover-brown">
         <i class="fas fa-cog"></i>
         <p style="display:inline-block;margin-left:5px;margin-top:1px;margin-bottom:1px;">Settings</p>
     </a>

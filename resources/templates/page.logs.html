@@ -3,7 +3,7 @@
 {{ template "common.header.html" .}}
 <!-- give us the ability to add page specific things to the head of the document here -->
 <!-- i.e. loading a page specific js file or stylesheet -->
-<script src="/resources/js/logs.js"></script>
+<script src="{{ .basePath }}/resources/js/logs.js"></script>
 
 <script>
 window.setInterval(function() {
