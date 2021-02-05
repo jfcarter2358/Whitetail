@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: whitetail
+    service: whitetail
+  name: whitetail
+spec:
+  selector:
+    matchLabels:
+      app: whitetail
+      service: whitetail
+  template:
+    metadata:
+      labels:
+        app: whitetail
+        service: whitetail
+      name: whitetail
+    spec:
+      containers:
+      - image: johncarterodg/whitetail:dev
+        imagePullPolicy: Always
+        name: whitetail
+        ports:
+        - containerPort: 9001
+          name: wt-http
+          protocol: TCP
+        - containerPort: 9002
+          name: wt-tcp
+          protocol: TCP
+        - containerPort: 9003
+          name: wt-udp
+          protocol: UDP
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /whitetail/config
+          name: config-vol
+        - mountPath: /whitetail/config/custom/logo
+          name: logo-vol
+        - mountPath: /whitetail/config/custom/icon
+          name: icon-vol
+      hostname: whitetail
+      restartPolicy: Always
+      volumes:
+      - configMap:
+          name: config-configmap
+        name: config-vol
+      - configMap:
+          name: whitetail-logo-configmap
+        name: logo-vol
+      - configMap:
+          name: whitetail-icon-configmap
+        name: icon-vol

@@ -10,5 +10,24 @@
     },
     "logging": {
         "max-age": "2d"
+    },
+    "branding": {
+        "primary_color": {
+            "background": "#C3C49E",
+            "text": "#000000"
+        },
+        "secondary_color": {
+            "background": "#8F7E4F",
+            "text": "#000000"
+        },
+        "tertiary_color": {
+            "background": "#524632",
+            "text": "#ffffff"
+        },
+        "INFO_color": "#4F772D",
+        "DEBUG_color": "#2B50AA",
+        "WARN_color": "#E24E1B",
+        "TRACE_color": "#610345",
+        "ERROR_color": "#95190C"
     }
 }

@@ -1,0 +1,23 @@
+.branding-primary,.branding-hover-primary:hover{color:#000000!important;background-color:#c3c49e!important}
+.branding-secondary,.branding-hover-secondary:hover{color:#000000!important;background-color:#8f7e4f!important}
+.branding-tertiary,.branding-hover-tertiary:hover{color:#ffffff!important;background-color:#524632!important}
+
+.WARN {
+    color:#e24e1b;
+}
+
+.INFO {
+    color:#4f772d;
+}
+
+.DEBUG {
+    color:#2b50aa;
+}
+
+.ERROR {
+    color:#95190c;
+}
+
+.TRACE {
+    color: #610345;
+}

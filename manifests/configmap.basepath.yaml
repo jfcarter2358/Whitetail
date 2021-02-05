@@ -12,7 +12,21 @@ data:
         }
       },
       "logging": {
-          "max-age": "2d"
+        "max-age": "2d"
+      },
+      "branding": {
+        "primary_color": {
+          "background": "#C3C49E",
+          "text": "#000000"
+        },
+        "secondary_color": {
+          "background": "#8F7E4F",
+          "text": "#000000"
+        },
+        "tertiary_color": {
+          "background": "#524632",
+          "text": "#ffffff"
+        }
       }
     }
 kind: ConfigMap

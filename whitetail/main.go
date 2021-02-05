@@ -9,30 +9,27 @@ import (
 	"whitetail/logging"
 	"whitetail/config"
 	"whitetail/index"
-	"whitetail/page"
+	// "whitetail/ast"
 	"strconv"
 )
 
 var router *gin.Engine
-var config *Config.ConfigObject
 
 func main() {
 	// Set Gin to production mode
 	gin.SetMode(gin.ReleaseMode)
 
-	config = Config.ReadConfigFile()
-	routerPort := ":" + strconv.Itoa(config.HTTPPort)
-
-	Page.InitConfig(config)
+	Config.ReadConfigFile()
+	routerPort := ":" + strconv.Itoa(Config.Config.HTTPPort)
 
 	// Read in the compass data from the json file
-	Logging.ConnectDataBase(config.Database.Type, config.Database.Postgres, config.Database.Sqlite)
-	Index.ConnectDataBase(config.Database.Type, config.Database.Postgres, config.Database.Sqlite)
-	basePath := config.BasePath
+	Logging.ConnectDataBase(Config.Config.Database.Type, Config.Config.Database.Postgres, Config.Config.Database.Sqlite)
+	Index.ConnectDataBase(Config.Config.Database.Type, Config.Config.Database.Postgres, Config.Config.Database.Sqlite)
+	basePath := Config.Config.BasePath
 	log.Print("Running with base path: " + basePath)
 
-	go Logging.StartTCPServer(config.TCPPort)
-	go Logging.StartUDPServer(config.UDPPort)
+	go Logging.StartTCPServer(Config.Config.TCPPort)
+	go Logging.StartUDPServer(Config.Config.UDPPort)
 
 	// Set the router as the default one provided by Gin
 	router = gin.Default()
