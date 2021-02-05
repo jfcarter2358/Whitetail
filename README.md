@@ -18,6 +18,8 @@
 - [x] Add spinner for query
 - [ ] Make list of services repopulate on click
 - [ ] Make level list unaccessable unless service is selected
+- [x] Break logs and query out into separate pages
+- [x] Improve logs page performance
 - [ ] Any other tasks I'll inevitably think of later
 
 ## Antler Query Language (AQL)
