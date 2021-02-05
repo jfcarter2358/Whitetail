@@ -1,7 +1,7 @@
 # Whitetail
 
 ## Premise
-Whitetail is a lightweight alternative to ELK for non-intensive applications. It is built with containerization in mind for a non-resource intensive log viewer with basic search capabilites.
+`Whitetail` is a lightweight alternative to ELK for non-intensive applications. It is built with containerization in mind for a non-resource intensive log viewer with basic search capabilites.
 
 ## TO DO
 - [x] Add settings page
@@ -13,7 +13,8 @@ Whitetail is a lightweight alternative to ELK for non-intensive applications. It
 - [ ] Add log age cleanup
 - [x] Add configurable branding
 - [x] Add 'Reset to Default' buittons in settings page
-- [ ] Add configuration section to README
+- [x] Add configuration section to README
+- [x] Make `PostgreSQL` database name configurable
 - [ ] Any other tasks I'll inevitably think of later
 
 ## Antler Query Language (AQL)
@@ -30,22 +31,22 @@ If you want to change the 'OR' statements to include more than just the two leve
 ( @level:INFO OR @level:WARN ) OR @level:DEBUG
 ```
 
-#### Filters
+### Filters
 The various filters that can be used in AQL statements are as follows (`< text like this is a placeholder >`):
-Filter | Desrciption
----|---
-`@level:< level >` | Get logs with level `< level >`
+Filter                 | Desrciption
+-----------------------|------------
+`@level:< level >`     | Get logs with level `< level >`
 `@service:< service >` | Get logs from service `< service >`
-`@year:< year >` | Get logs wtih a timestamp that has the year `< year >`
-`@month:< month >` | Get logs wtih a timestamp that has the year `< month >`
-`@day:< day >` | Get logs wtih a timestamp that has the year `< day >`
-`@hour:< hour >` | Get logs wtih a timestamp that has the year `< hour >`
-`@minute:< minute >` | Get logs wtih a timestamp that has the year `< minute >`
-`@second:< second >` | Get logs wtih a timestamp that has the year `< second >`
-`< word >`  | Get logs whose message includes `< word >`
-`@all` | Get all logs
+`@year:< year >`       | Get logs wtih a timestamp that has the year `< year >`
+`@month:< month >`     | Get logs wtih a timestamp that has the year `< month >`
+`@day:< day >`         | Get logs wtih a timestamp that has the year `< day >`
+`@hour:< hour >`       | Get logs wtih a timestamp that has the year `< hour >`
+`@minute:< minute >`   | Get logs wtih a timestamp that has the year `< minute >`
+`@second:< second >`   | Get logs wtih a timestamp that has the year `< second >`
+`< word >`             | Get logs whose message includes `< word >`
+`@all`                 | Get all logs
 
-#### Operators
+### Operators
 The various operators are shown below with examples
 - __AND__
     - `< left filter > AND < right filter >`
@@ -77,9 +78,137 @@ The various operators are shown below with examples
         - Text
         - Timestamp
 
+## Configuration
+
+An example of a `whitetail` configuraiton file is as follows:
+
+```json
+{
+    "http-port": 9001,
+    "tcp-port": 9002,
+    "udp-port": 9003,
+    "basepath": "",
+    "database": {
+        "sqlite": {
+            "path": "./data/whitetail.db"
+        }
+    },
+    "logging": {
+        "max-age-days": 2,
+        "poll-rate": "1h"
+    },
+    "branding": {
+        "primary_color": {
+            "background": "#C3C49E",
+            "text": "#000000"
+        },
+        "secondary_color": {
+            "background": "#8F7E4F",
+            "text": "#000000"
+        },
+        "tertiary_color": {
+            "background": "#524632",
+            "text": "#ffffff"
+        },
+        "INFO_color": "#4F772D",
+        "WARN_color": "#E24E1B",
+        "DEBUG_color": "#2B50AA",
+        "TRACE_color": "#610345",
+        "ERROR_color": "#95190C"
+    }
+}
+```
+
+This JSON document holds the information required to run an instance of `Whitetail`. It can be broken down into the following sections.
+
+### Basic Configuration
+
+The basic configuration handles the server itself that `Whitetail` runs. This includes the following values:
+
+Name        | Description
+------------|------------
+`http-port` | The port to serve the `Whitetail` UI on
+`tcp-port`  | The port to listen to TCP logs on
+`udp-port`  | The port to listen to UDP logs on
+`basepath`  | the basepath to serve the various endpoints on
+
+### Database
+
+The database configuration is held in the `database` key in the configuration file. This defines which database `Whitetail` will use to hold log and index information. Currently, `Whitetail` currently supports a in-container `Sqlite` databse _or_ an external `PostgreSQL` database. 
+
+To configure `Whitetail` to use `Sqlite`, set the `database` section to this:
+
+```json
+{
+    "sqlite": {
+        "path": "./data/whitetail.db"
+    }
+}
+```
+`Sqlite` configuration setting information is as follows
+
+Name   | Description
+-------|------------
+`path` | The local location to create the `Sqlite` db file
+
+To configure `Whitetail` to use `PostgreSQL`, set the `database` section to this:
+
+```json
+{
+    "postgres": {
+        "host": "localhost",
+        "port": 5432,
+        "username": "postgres",
+        "password": "foobar",
+        "database": "whitetail"
+    }
+}
+```
+
+As a note, the database must be created prior to `Whitetail` attempting to connect to it
+
+`PostgreSQL` configuration setting information is as follows
+
+Name       | Description
+-----------|------------
+`host`     | The hostname of the `PostgreSQL` instalce
+`port`     | The port that `PostgreSQL` is running on
+`username` | The username for the database
+`password` | The password for the database
+`database` | The name of the database to use
+
+### Logging
+
+Logging configuration mainly concerns itself with the cleanup process to remove old logs.
+
+Name           | Description
+---------------|------------
+`max-age-days` | How many days to keep logs for (integer)
+`poll-rate`    | How often to check for old logs. Is of the form `< number >< time unit >` where valid time units are `ns`, `us`, `ms`, `s`, `m`, `h`
+
+### Branding
+
+Branding configuration allows for `Whitetail` to be customized to fit your product that it is being used in conjunction with. You an either change these through the `Settings` page in the UI or through the configuration file.
+
+Name                         | Description
+-----------------------------|------------
+`primary_color.background`   | Primary branding color
+`primary_color.text`         | Color for text over primary branding color
+`secondary_color.background` | Secondary branding color
+`secondary_color.text`       | Color for text over secondary branding color
+`tertiary_color.backgroud`   | Tertiary branding color
+`tertiary_color.text`        | Color for text over tertiary branding color
+`INFO_color`                 | Color to be used to highligh `INFO` level logs
+`WARN_color`                 | Color to be used to highligh `WARN` level logs
+`DEBUG_color`                | Color to be used to highligh `DEBUG` level logs
+`TRACE_color`                | Color to be used to highligh `TRACE` level logs
+`ERROR_color`                | Color to be used to highligh `ERROR` level logs
+
+In addition, you can configure the logo shown in the UI by placing your own logo file at `< whitetail root >/config/custom/logo/logo.png` and you can configure the icon shown in the browser by placing your own icon file at `< whitetail root >/config/custom/icon/favicon.png`
+
 ## Container Log Persistence
-To persist your logs when running in a containerized environment you have a couple of options. You can either run Whitetail with an external (persisted) PostgreSQL database, or you can mount a volume at `/whitetail/data` in your container and persist that (if you are using a Sqlite database)
+To persist your logs when running in a containerized environment you have a couple of options. You can either run `Whitetail` with an external (persisted) PostgreSQL database, or you can mount a volume at `/whitetail/data` in your container and persist that (if you are using a Sqlite database)
 
 ## Contact
-Whitetail is written by John Carter
-If you have any questions or concerns about Whitetail, feel free to contact me at jfcarter2358.at.gmail.com
+`Whitetail` is written by John Carter
+If you have any questions or concerns, feel free to contact me at jfcarter2358.at.gmail.com

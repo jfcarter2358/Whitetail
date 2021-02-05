@@ -2,7 +2,7 @@ package AST
 
 import (
     "strings"
-    "log"
+    // "log"
 	"regexp"
 	"whitetail/index"
 	"github.com/google/uuid"
@@ -143,7 +143,6 @@ func OR(l, r []string) []string {
 			out = append(out, i)
 		}
 	}
-	log.Println(len(out))
 	return out
 }
 
@@ -186,8 +185,10 @@ func LIMIT(l []string, r string) []string {
 func ORDER_ASCEND(l []string, r string) []string {
 	logs := []Logging.Log{}
 	for _, id := range(l) {
-		log, _ := Logging.GetLogByID(id)
-		logs = append(logs, *log)
+		log, err := Logging.GetLogByID(id)
+		if err == nil {
+			logs = append(logs, *log)
+		}
 	}
 	if r == "Text" {
 		sort.Slice(logs[:], func(i, j int) bool {
@@ -235,8 +236,10 @@ func ORDER_ASCEND(l []string, r string) []string {
 func ORDER_DESCEND(l []string, r string) []string {
 	logs := []Logging.Log{}
 	for _, id := range(l) {
-		log, _ := Logging.GetLogByID(id)
-		logs = append(logs, *log)
+		log, err := Logging.GetLogByID(id)
+		if err == nil {
+			logs = append(logs, *log)
+		}
 	}
 	if r == "Text" {
 		sort.Slice(logs[:], func(i, j int) bool {

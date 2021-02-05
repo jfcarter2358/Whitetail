@@ -42,7 +42,6 @@ function filterLevel(basePath, level) {
 function query(basePath) {
     queryString = $("#query").val()
     PREVIOUS_QUERY = queryString
-    console.log(queryString)
     $.ajax({
         type: "POST",
         url: basePath + "/api/logs/query",
@@ -64,7 +63,6 @@ function changeService(basePath, service) {
     lineLimit = $("#line_limit").val()
     queryString = formatQuery(service, lineLimit)
     PREVIOUS_QUERY = queryString
-    console.log(queryString)
     $.ajax({
         type: "POST",
         url: basePath + "/api/logs/query",
@@ -83,7 +81,6 @@ function changeService(basePath, service) {
 function refreshLogs(basePath) {
     service = $("#services_button").text()
     if (service != "Select a Service") {
-        console.log(PREVIOUS_QUERY)
         $.ajax({
             type: "POST",
             url: basePath + "/api/logs/query",

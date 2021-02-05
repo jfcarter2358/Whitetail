@@ -11,7 +11,6 @@ import (
 )
 
 func RedirectIndexPage(c *gin.Context) {
-	// log.Println(config.BasePath)
 	c.Redirect(301, Config.Config.BasePath + "/ui/home")
 }
 

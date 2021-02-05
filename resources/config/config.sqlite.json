@@ -9,7 +9,8 @@
         }
     },
     "logging": {
-        "max-age": "2d"
+        "max-age-days": 2,
+        "poll-rate": "1h"
     },
     "branding": {
         "primary_color": {

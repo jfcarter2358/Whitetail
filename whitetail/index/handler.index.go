@@ -13,6 +13,7 @@ import (
 	"whitetail/config"
 	"time"
 	"strconv"
+	"gorm.io/gorm/logger"
 )
 
 type Index struct {
@@ -34,12 +35,16 @@ func ConnectDataBase(db_type string, postgresConfig *Config.PostgresConfigObject
             User:     url.UserPassword(postgresConfig.Username, postgresConfig.Password),
             Scheme:   db_type,
             Host:     fmt.Sprintf("%s:%d", postgresConfig.Host, postgresConfig.Port),
-            Path:     "whitetail",
+            Path:     postgresConfig.Database,
             RawQuery: (&url.Values{"sslmode": []string{"disable"}}).Encode(),
         }
-    	database, err = gorm.Open(postgres.Open(dsn.String()), &gorm.Config{})
+    	database, err = gorm.Open(postgres.Open(dsn.String()), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Silent),
+		})
     } else if db_type == "sqlite" {
-        database, err = gorm.Open(sqlite.Open(sqliteConfig.Path), &gorm.Config{})
+        database, err = gorm.Open(sqlite.Open(sqliteConfig.Path), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Silent),
+		})
     }
 
 	if err != nil {

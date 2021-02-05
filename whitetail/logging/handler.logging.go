@@ -19,6 +19,7 @@ import (
     "whitetail/index"
     "sort"
     "whitetail/config"
+    "gorm.io/gorm/logger"
 )
 
 type LogMessageInput struct {
@@ -79,12 +80,16 @@ func ConnectDataBase(db_type string, postgresConfig *Config.PostgresConfigObject
             User:     url.UserPassword(postgresConfig.Username, postgresConfig.Password),
             Scheme:   db_type,
             Host:     fmt.Sprintf("%s:%d", postgresConfig.Host, postgresConfig.Port),
-            Path:     "whitetail",
+            Path:     postgresConfig.Database,
             RawQuery: (&url.Values{"sslmode": []string{"disable"}}).Encode(),
         }
-    	database, err = gorm.Open(postgres.Open(dsn.String()), &gorm.Config{})
+    	database, err = gorm.Open(postgres.Open(dsn.String()), &gorm.Config{
+            Logger: logger.Default.LogMode(logger.Silent),
+        })
     } else if db_type == "sqlite" {
-        database, err = gorm.Open(sqlite.Open(sqliteConfig.Path), &gorm.Config{})
+        database, err = gorm.Open(sqlite.Open(sqliteConfig.Path), &gorm.Config{
+            Logger: logger.Default.LogMode(logger.Silent),
+        })
     }
 
 	if err != nil {
@@ -92,7 +97,7 @@ func ConnectDataBase(db_type string, postgresConfig *Config.PostgresConfigObject
 		panic("Failed to connect to database!")
 	}
 
-	database.AutoMigrate(&Log{})
+    database.AutoMigrate(&Log{})
 
     DB = database
 
@@ -300,7 +305,7 @@ func parseData(data string) {
             var input *LogMessageInput
             var byt = []byte(messages[i])
             byt = bytes.Trim(byt, "\x00")
-            fmt.Println("TO UNMARSHAL : " + messages[i])
+            // fmt.Println("TO UNMARSHAL : " + messages[i])
             var readErr = json.Unmarshal(byt, &input)
             if readErr != nil {
                 fmt.Println(readErr)
@@ -355,6 +360,9 @@ func handleTCPRequest(conn net.Conn) {
 }
 
 func Cleanup() {
+    if Config.Config.Logging.MaxAgeDays == -1 {
+        return
+    }
     for true {
         poll, err := time.ParseDuration(Config.Config.Logging.PollRate)
         if err != nil {
