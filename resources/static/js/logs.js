@@ -7,7 +7,8 @@ function formatQuery(service, limit) {
     // because I can't be bothered to figure out a progromatic
     // way to generate them
     if (levelList.length == 0) {
-        return `@service:${service} LIMIT ${limit}`
+        // return `@service:${service} LIMIT ${limit}`
+        return ""
     } else if (levelList.length == 1) {
         return `( @level:${levelList[0]} AND @service:${service} ) LIMIT ${limit}`
     } else if (levelList.length == 2) {

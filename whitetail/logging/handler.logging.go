@@ -353,3 +353,27 @@ func handleTCPRequest(conn net.Conn) {
     // Close the connection when you're done with it.
     conn.Close()
 }
+
+func Cleanup() {
+    for true {
+        poll, err := time.ParseDuration(Config.Config.Logging.PollRate)
+        if err != nil {
+            log.Println(err)
+            return
+        }
+        log.Println("Sleeping before cleanup...")
+        time.Sleep(poll)
+        log.Println("Cleaning up...")
+        t := time.Now()
+        cutoff := t.AddDate(0, 0, -1 * Config.Config.Logging.MaxAgeDays).Format("2006-01-02T15:04:05")
+        logs := GetAllLogs()
+        cleanupCount := 0
+        for _, log := range logs {
+            if log.Timestamp < cutoff{
+                cleanupCount += 1
+                DeleteLogByID(log.ID)
+            }
+        }
+        log.Println("Cleaned up " + strconv.Itoa(cleanupCount) + " logs")
+    }
+}

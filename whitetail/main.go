@@ -41,6 +41,9 @@ func main() {
 	// Initialize the routes
 	initializeRoutes(basePath)
 
+	// Kick off the log cleanup check
+	go Logging.Cleanup()
+
 	// Start serving the application
 	router.Run(routerPort)
 }

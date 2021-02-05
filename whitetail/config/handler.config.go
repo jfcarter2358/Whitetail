@@ -55,7 +55,8 @@ type SqliteConfigObject struct {
 }
 
 type LoggingConfigObject struct { 
-	MaxAge string `json:"max-age"`
+	MaxAgeDays int `json:"max-age-days"`
+	PollRate string `json:"poll-rate"`
 }
 
 var Config ConfigObject

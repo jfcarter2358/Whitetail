@@ -2,7 +2,7 @@ package AST
 
 import (
     "strings"
-    _ "log"
+    "log"
 	"regexp"
 	"whitetail/index"
 	"github.com/google/uuid"
@@ -84,10 +84,9 @@ func Operate(self AST, ASTs map[string]AST) []string {
 		l = Operate(ASTs[self.Left], ASTs)
 	} else {
 		index, err := Index.GetIndexByKey(self.Left) 
-		if err != nil {
-			return []string{}
+		if err == nil {
+			l = strings.Split(index.IDs, ",")
 		}
-		l = strings.Split(index.IDs, ",")
 	}
 	if contains(NON_LOGIC_OPERATIONS, self.Operation) == false {
 		match, _  = regexp.Match(`%\S*%`, []byte(self.Right))
@@ -95,10 +94,9 @@ func Operate(self AST, ASTs map[string]AST) []string {
 			r = Operate(ASTs[self.Right], ASTs)
 		} else {
 			index, err := Index.GetIndexByKey(self.Right) 
-			if err != nil {
-				return []string{}
+			if err == nil {
+				r = strings.Split(index.IDs, ",")
 			}
-			r = strings.Split(index.IDs, ",")
 		}
 
 		if self.Operation == "AND" {
@@ -145,6 +143,7 @@ func OR(l, r []string) []string {
 			out = append(out, i)
 		}
 	}
+	log.Println(len(out))
 	return out
 }
 

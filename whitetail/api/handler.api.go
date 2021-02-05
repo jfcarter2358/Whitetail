@@ -13,10 +13,6 @@ import (
 	"whitetail/ast"
 	"os"
 	"io"
-	/*
-	"github.com/leekchan/timeutil"
-	"time"
-	*/
 )
 
 type AnalyticsInput struct {
