@@ -18,7 +18,7 @@ spec:
       name: whitetail
     spec:
       containers:
-      - image: johncarterodg/whitetail:0.2
+      - image: johncarterodg/whitetail:0.3
         imagePullPolicy: Always
         name: whitetail
         ports:
@@ -48,7 +48,7 @@ spec:
       restartPolicy: Always
       volumes:
       - configMap:
-          name: config-configmap
+          name: whitetail-config-configmap
         name: config-vol
       - configMap:
           name: whitetail-logo-configmap

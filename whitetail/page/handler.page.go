@@ -33,6 +33,15 @@ func ShowLogsPage(c *gin.Context) {
 		"page.logs.html")
 }
 
+func ShowQueryPage(c *gin.Context) {
+	// Render the logs-selection.html page
+	render(c, gin.H{
+		"title":   "Logs",
+		"basePath": Config.Config.BasePath,
+		"location": "Query"}, 
+		"page.query.html")
+}
+
 func ShowSettingsPage(c *gin.Context) {
 	// Render the logs-selection.html page
 	render(c, gin.H{

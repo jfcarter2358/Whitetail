@@ -31,4 +31,4 @@ data:
     }
 kind: ConfigMap
 metadata:
-  name: config-configmap
+  name: whitetail-config-configmap

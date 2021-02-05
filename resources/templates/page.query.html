@@ -1,0 +1,38 @@
+<!-- page.logs.html -->
+
+{{ template "common.header.html" .}}
+<!-- give us the ability to add page specific things to the head of the document here -->
+<!-- i.e. loading a page specific js file or stylesheet -->
+<script src="{{ .basePath }}/resources/js/query.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ .basePath }}/resources/css/loader.css">
+
+</head>
+<body class="whitetail-white">
+{{ template "common.sidebar.html" . }}
+<div id="main" style="margin-left:15%;">
+{{ template "common.menu.html" . }}
+<br>
+<div id="loader"></div>
+<div id="contents" class="w3-container">
+	<div class="w3-container w3-card branding-primary w3-padding">
+		<div class="w3-row-padding">
+			<div class="w3-col s1 w3-cell-bottom">
+				<label style="display:inline-block;">Query String</label>
+			</div>
+			<div class="w3-col s9">
+				<input class="w3-input" type="text" id="query">
+			</div>
+			<div class="w3-col s2">
+				<button class="w3-button branding-secondary branding-hover-tertiary w3-right" onclick="query('{{ .basePath }}')" style="width:100%;">Execute Query</button>
+			</div>
+		</div>
+	</div>
+	<br>
+	<div class="w3-card branding-primary w3-container" id="logs">
+	</div>
+	<br>
+</div>
+</div>
+
+<!--Embed the footer.html template at this location-->
+{{ template "common.footer.html" .}}

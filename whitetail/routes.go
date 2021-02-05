@@ -30,6 +30,7 @@ func initializeRoutes(basePath string) {
 	{
 		uiRoutes.GET("/home", Page.ShowHomePage)
 		uiRoutes.GET("/logs", Page.ShowLogsPage)
+		uiRoutes.GET("/query", Page.ShowQueryPage)
 		uiRoutes.GET("/settings", Page.ShowSettingsPage)
 	}
 }

@@ -1,24 +1,29 @@
 
 var levelList = ['INFO', 'WARN', 'DEBUG', 'TRACE', 'ERROR']
-var PREVIOUS_QUERY = ""
 
 function formatQuery(service, limit) {
     // hard-coding queries for now
     // because I can't be bothered to figure out a progromatic
     // way to generate them
+    maxLimit = parseInt(limit) * 5
     if (levelList.length == 0) {
         // return `@service:${service} LIMIT ${limit}`
         return ""
     } else if (levelList.length == 1) {
-        return `( @level:${levelList[0]} AND @service:${service} ) LIMIT ${limit}`
+        // return `( @level:${levelList[0]} AND @service:${service} ) LIMIT ${limit}`
+        return `((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) LIMIT ${limit}`
     } else if (levelList.length == 2) {
-        return `( ( @level:${levelList[0]} OR @level:${levelList[1]} ) AND @service:${service} ) LIMIT ${limit}`
+        // return `( ( @level:${levelList[0]} OR @level:${levelList[1]} ) AND @service:${service} ) LIMIT ${limit}`
+        return `((((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) LIMIT ${limit}) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[1]}) LIMIT ${limit})) LIMIT ${limit}`
     } else if (levelList.length == 3) {
-        return `( ( ( @level:${levelList[0]} OR @level:${levelList[1]} ) OR @level:${levelList[2]} ) AND @service:${service} ) LIMIT ${limit}`
+        // return `( ( ( @level:${levelList[0]} OR @level:${levelList[1]} ) OR @level:${levelList[2]} ) AND @service:${service} ) LIMIT ${limit}`
+        return `(((((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) LIMIT ${limit}) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[1]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[2]}) LIMIT ${limit})) LIMIT ${limit}`
     } else if (levelList.length == 4) {
-        return `( ( ( ( @level:${levelList[0]} OR @level:${levelList[1]} ) OR @level:${levelList[2]} ) OR @level:${levelList[3]} ) AND @service:${service} ) LIMIT ${limit}`
+        // return `( ( ( ( @level:${levelList[0]} OR @level:${levelList[1]} ) OR @level:${levelList[2]} ) OR @level:${levelList[3]} ) AND @service:${service} ) LIMIT ${limit}`
+        return `((((((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) LIMIT ${limit}) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[1]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[2]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[3]}) LIMIT ${limit})) LIMIT ${limit}`
     } else if (levelList.length == 5) {
-        return `( ( ( ( ( @level:${levelList[0]} OR @level:${levelList[1]} ) OR @level:${levelList[2]} ) OR @level:${levelList[3]} ) OR @level:${levelList[4]} ) AND @service:${service} ) LIMIT ${limit}`
+        // return `( ( ( ( ( @level:${levelList[0]} OR @level:${levelList[1]} ) OR @level:${levelList[2]} ) OR @level:${levelList[3]} ) OR @level:${levelList[4]} ) AND @service:${service} ) LIMIT ${limit}`
+        return `(((((((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) LIMIT ${limit}) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[1]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[2]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[3]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[4]}) LIMIT ${limit})) LIMIT ${limit}`
     }
 }
 
@@ -35,26 +40,8 @@ function filterLevel(basePath, level) {
     }
     service = $("#services_button").text()
     lineLimit = $("#line_limit").val()
-    PREVIOUS_QUERY = formatQuery(service, lineLimit)
+    document.getElementById("loader").style.display = "block";
     refreshLogs(basePath)
-}
-
-function query(basePath) {
-    queryString = $("#query").val()
-    PREVIOUS_QUERY = queryString
-    $.ajax({
-        type: "POST",
-        url: basePath + "/api/logs/query",
-        data: JSON.stringify({"query": queryString}),
-        contentType:"application/json;",
-        dataType:"json",
-        success: function(data, status) {
-            $("#logs").html(data['logs'])
-        },
-        error: function(data, status) {
-            console.log(data)
-        }
-    });
 }
 
 function changeService(basePath, service) {
@@ -62,7 +49,8 @@ function changeService(basePath, service) {
     toggleDropdown('services_dropdown')
     lineLimit = $("#line_limit").val()
     queryString = formatQuery(service, lineLimit)
-    PREVIOUS_QUERY = queryString
+    console.log(queryString)
+    document.getElementById("loader").style.display = "block";
     $.ajax({
         type: "POST",
         url: basePath + "/api/logs/query",
@@ -71,8 +59,10 @@ function changeService(basePath, service) {
         dataType:"json",
         success: function(data, status) {
             $("#logs").html(data['logs'])
+            document.getElementById("loader").style.display = "none";
         },
         error: function(data, status) {
+            document.getElementById("loader").style.display = "none";
             console.log(data)
         }
     });
@@ -81,17 +71,21 @@ function changeService(basePath, service) {
 function refreshLogs(basePath) {
     service = $("#services_button").text()
     if (service != "Select a Service") {
+        lineLimit = $("#line_limit").val()
+        queryString = formatQuery(service, lineLimit)
         $.ajax({
             type: "POST",
             url: basePath + "/api/logs/query",
-            data: JSON.stringify({"query": PREVIOUS_QUERY}),
+            data: JSON.stringify({"query": queryString}),
             contentType:"application/json;",
             dataType:"json",
             success: function(data, status) {
                 $("#logs").html(data['logs'])
+                document.getElementById("loader").style.display = "none";
             },
             error: function(data, status) {
                 console.log(data)
+                document.getElementById("loader").style.display = "none";
             }
         });
     }

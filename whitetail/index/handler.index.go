@@ -101,7 +101,7 @@ func AddIDToIndex(key, newID string){
 	} else {
 		newIndex := Index{}
 		newIndex.ID = key
-		newIndex.IDs = index.IDs + "," + newID
+		newIndex.IDs = newID + "," + index.IDs
 		DB.Model(index).Updates(newIndex)
 	}
 }

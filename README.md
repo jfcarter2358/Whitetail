@@ -15,6 +15,9 @@
 - [x] Add 'Reset to Default' buittons in settings page
 - [x] Add configuration section to README
 - [x] Make `PostgreSQL` database name configurable
+- [x] Add spinner for query
+- [ ] Make list of services repopulate on click
+- [ ] Make level list unaccessable unless service is selected
 - [ ] Any other tasks I'll inevitably think of later
 
 ## Antler Query Language (AQL)
