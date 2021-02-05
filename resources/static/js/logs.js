@@ -11,19 +11,19 @@ function formatQuery(service, limit) {
         return ""
     } else if (levelList.length == 1) {
         // return `( @level:${levelList[0]} AND @service:${service} ) LIMIT ${limit}`
-        return `((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) LIMIT ${limit}`
+        return `(((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) ORDER_ASCEND Timestamp) LIMIT ${limit}`
     } else if (levelList.length == 2) {
         // return `( ( @level:${levelList[0]} OR @level:${levelList[1]} ) AND @service:${service} ) LIMIT ${limit}`
-        return `((((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) LIMIT ${limit}) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[1]}) LIMIT ${limit})) LIMIT ${limit}`
+        return `(((((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) LIMIT ${limit}) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[1]}) LIMIT ${limit})) ORDER_ASCEND Timestamp) LIMIT ${limit}`
     } else if (levelList.length == 3) {
         // return `( ( ( @level:${levelList[0]} OR @level:${levelList[1]} ) OR @level:${levelList[2]} ) AND @service:${service} ) LIMIT ${limit}`
-        return `(((((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) LIMIT ${limit}) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[1]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[2]}) LIMIT ${limit})) LIMIT ${limit}`
+        return `((((((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) LIMIT ${limit}) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[1]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[2]}) LIMIT ${limit})) ORDER_ASCEND Timestamp) LIMIT ${limit}`
     } else if (levelList.length == 4) {
         // return `( ( ( ( @level:${levelList[0]} OR @level:${levelList[1]} ) OR @level:${levelList[2]} ) OR @level:${levelList[3]} ) AND @service:${service} ) LIMIT ${limit}`
-        return `((((((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) LIMIT ${limit}) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[1]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[2]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[3]}) LIMIT ${limit})) LIMIT ${limit}`
+        return `(((((((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) LIMIT ${limit}) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[1]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[2]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[3]}) LIMIT ${limit})) ORDER_ASCEND Timestamp) LIMIT ${limit}`
     } else if (levelList.length == 5) {
         // return `( ( ( ( ( @level:${levelList[0]} OR @level:${levelList[1]} ) OR @level:${levelList[2]} ) OR @level:${levelList[3]} ) OR @level:${levelList[4]} ) AND @service:${service} ) LIMIT ${limit}`
-        return `(((((((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) LIMIT ${limit}) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[1]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[2]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[3]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[4]}) LIMIT ${limit})) LIMIT ${limit}`
+        return `((((((((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[0]}) LIMIT ${limit}) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[1]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[2]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[3]}) LIMIT ${limit})) OR (((@service:${service} LIMIT ${maxLimit}) AND @level:${levelList[4]}) LIMIT ${limit})) ORDER_ASCEND Timestamp) LIMIT ${limit}`
     }
 }
 
