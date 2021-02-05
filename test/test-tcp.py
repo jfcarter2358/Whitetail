@@ -13,7 +13,7 @@ StackTrace string `json:"stack_trace"`
 '''
 message = sys.argv[2]
 service = sys.argv[1]
-logger_name = 'test'
+logger_name = 'test-logger'
 stack_trace = ''
 
 host = "localhost"

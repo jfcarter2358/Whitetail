@@ -1,3 +1,4 @@
 /dist
 .python-version
 .DS_Store
+/misc

@@ -10,22 +10,16 @@ import (
 	"whitetail/config"
 )
 
-var config *Config.ConfigObject
-
-func InitConfig(newConfig *Config.ConfigObject) {
-	config = newConfig
-}
-
 func RedirectIndexPage(c *gin.Context) {
 	// log.Println(config.BasePath)
-	c.Redirect(301, config.BasePath + "/ui/home")
+	c.Redirect(301, Config.Config.BasePath + "/ui/home")
 }
 
 func ShowHomePage(c *gin.Context) {
 	// Render the logs-selection.html page
 	render(c, gin.H{
 		"title":   "Home",
-		"basePath": config.BasePath,
+		"basePath": Config.Config.BasePath,
 		"location": "Home"}, 
 		"page.index.html")
 }
@@ -34,7 +28,7 @@ func ShowLogsPage(c *gin.Context) {
 	// Render the logs-selection.html page
 	render(c, gin.H{
 		"title":   "Logs",
-		"basePath": config.BasePath,
+		"basePath": Config.Config.BasePath,
 		"location": "Logs",
 		"services": Logging.Services}, 
 		"page.logs.html")
@@ -44,8 +38,16 @@ func ShowSettingsPage(c *gin.Context) {
 	// Render the logs-selection.html page
 	render(c, gin.H{
 		"title":   "Settings",
-		"basePath": config.BasePath,
-		"location": "Settings"}, 
+		"basePath": Config.Config.BasePath,
+		"location": "Settings",
+		"primary_color": Config.Config.Branding.PrimaryColor,
+		"secondary_color": Config.Config.Branding.SecondaryColor,
+		"tertiary_color": Config.Config.Branding.TertiaryColor,
+		"INFO_color": Config.Config.Branding.INFOColor,
+		"WARN_color": Config.Config.Branding.WARNColor,
+		"DEBUG_color": Config.Config.Branding.DEBUGColor,
+		"TRACE_color": Config.Config.Branding.TRACEColor,
+		"ERROR_color": Config.Config.Branding.ERRORColor}, 
 		"page.settings.html")
 }
 

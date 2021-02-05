@@ -11,6 +11,8 @@ import (
     "errors"
 	"regexp"
 	"whitetail/config"
+	"time"
+	"strconv"
 )
 
 type Index struct {
@@ -99,7 +101,7 @@ func AddIDToIndex(key, newID string){
 	}
 }
 
-func ParseLog(text, id string) {
+func ParseLog(text, id, timestamp, level, service string) {
 	reg, err := regexp.Compile("[^a-zA-Z0-9\\s]+")
     if err != nil {
         log.Fatal(err)
@@ -109,4 +111,21 @@ func ParseLog(text, id string) {
 	for _, key := range words {
 		AddIDToIndex(key, id)
 	}
+	layout := "2006-01-02T15:04:05"
+	t, err := time.Parse(layout, timestamp)
+	yearString := strconv.Itoa(t.Year())
+	monthString := strconv.Itoa(int(t.Month()))
+	dayString := strconv.Itoa(t.Day())
+	hourString := strconv.Itoa(t.Hour())
+	minuteString := strconv.Itoa(t.Minute())
+	secondString := strconv.Itoa(t.Second())
+	AddIDToIndex("@year:" + yearString, id)
+	AddIDToIndex("@month:" + monthString, id)
+	AddIDToIndex("@day:" + dayString, id)
+	AddIDToIndex("@hour:" + hourString, id)
+	AddIDToIndex("@minute:" + minuteString, id)
+	AddIDToIndex("@second:" + secondString, id)
+	AddIDToIndex("@level:" + level, id)
+	AddIDToIndex("@service:" + service, id)
+	AddIDToIndex("@all", id)
 }

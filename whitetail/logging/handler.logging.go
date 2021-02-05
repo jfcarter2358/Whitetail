@@ -56,10 +56,11 @@ var Services []string
 
 func formatLogMessage(data *LogMessageInput) string{
     // log line format is
-    // [ TIMESTAMP ] [ LEVEL ] [ LOGGER ] MESSAGE
+    // [ TIMESTAMP ] [ LEVEL ] [ SERVICE ] MESSAGE
     message := "[" + data.Timestamp + "] "
     message = message + "[<span class=\"" + data.Level + "\">" + data.Level + "</span>] "
-    message = message + "[" + data.LoggerName + "] "
+    // message = message + "[" + data.LoggerName + "] "
+    message = message + "[" + data.Service + "] "
     message = message + data.Message + "<br>"
     if data.StackTrace != "" {
         message += strings.ReplaceAll(strings.ReplaceAll(data.StackTrace, "\t", "&emsp;&emsp;&emsp;"), "\n", "<br>")
@@ -234,7 +235,7 @@ func CreateNewLog(text, level, timestamp, service, rawMessage string) (*Log, err
 
     DB.Create(&log)
     
-    Index.ParseLog(rawMessage, id)
+    Index.ParseLog(rawMessage, id, timestamp, level, service)
 
 	return &log, nil
 }

@@ -7,31 +7,11 @@
 
 <script>
 window.setInterval(function() {
-	getLogs("{{ .basePath }}")
+	if ($("#live_view").is(':checked')) {
+		refreshLogs("{{ .basePath }}")
+	}
 }, 1000);
 </script>
-<style>
-	.WARN {
-        color:#E24E1B;
-    }
-
-    .INFO {
-        color:#4F772D;
-    }
-
-    .DEBUG {
-        color:#2B50AA;
-    }
-
-    .ERROR {
-        color:#95190C;
-    }
-
-    .TRACE {
-        color: #610345
-    }
-</style>
-
 </head>
 <body class="whitetail-white">
 {{ template "common.sidebar.html" . }}
@@ -39,49 +19,59 @@ window.setInterval(function() {
 {{ template "common.menu.html" . }}
 <br>
 <div id="contents" class="w3-container">
-	<div class="w3-container w3-card whitetail-sage w3-padding">
+	<div class="w3-container w3-card branding-primary w3-padding">
 		<div class="w3-row-padding">
-			<div class="w3-col s2">
+			<div class="w3-col s1">
 				<input class="w3-check" id="live_view" type="checkbox">
 				<label>Live View</label>
 			</div>
-			<div class="w3-col s2">
-				<label>Line Limit</label>
+			<div class="w3-col s1 w3-cell-middle">
+				<label class="w3-cell-bottom">Line Limit</label>
+			</div>
+			<div class="w3-col s2 w3-cell-middle">
 				<input id="line_limit" type="text" value=100>
 			</div>
-			<div class="w3-col s2">
-				<div class="w3-dropdown-click w3-right">
-					<button id="level_button" onclick="toggleDropdown('level_dropdown')" class="w3-button whitetail-brown whitetail-hover-dark-brown" style="width:200px;">Filter by Log Level</button>
+			<div class="w3-col s3">
+				<div class="w3-dropdown-click w3-right" style="width:100%;">
+					<button id="level_button" onclick="toggleDropdown('level_dropdown')" class="w3-button branding-secondary branding-hover-tertiary" style="width:100%;">Filter by Log Level</button>
 					<div id="level_dropdown" class="w3-dropdown-content w3-bar-block w3-border">
-						<button id="INFO" class="w3-bar-item w3-button whitetail-green whitetail-hover-sage" onclick="filterLevel('{{ $.basePath }}', 'INFO')">INFO</button>
-						<button id="DEBUG" class="w3-bar-item w3-button whitetail-green whitetail-hover-sage" onclick="filterLevel('{{ $.basePath }}', 'DEBUG')">DEBUG</button>
-						<button id="WARN" class="w3-bar-item w3-button whitetail-green whitetail-hover-sage" onclick="filterLevel('{{ $.basePath }}', 'WARN')">WARN</button>
-						<button id="TRACE" class="w3-bar-item w3-button whitetail-green whitetail-hover-sage" onclick="filterLevel('{{ $.basePath }}', 'TRACE')">TRACE</button>
-						<button id="ERROR" class="w3-bar-item w3-button whitetail-green whitetail-hover-sage" onclick="filterLevel('{{ $.basePath }}', 'ERROR')">ERROR</button>
+						<button id="INFO" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'INFO')">INFO</button>
+						<button id="DEBUG" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'DEBUG')">DEBUG</button>
+						<button id="WARN" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'WARN')">WARN</button>
+						<button id="TRACE" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'TRACE')">TRACE</button>
+						<button id="ERROR" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'ERROR')">ERROR</button>
 					</div>
 				</div>
 			</div>
 			<div class="w3-col s3">
-				<div class="w3-dropdown-click w3-right">
-					<button id="services_button" onclick="toggleDropdown('services_dropdown')" class="w3-button whitetail-brown whitetail-hover-dark-brown" style="width:200px;">Select a Service</button>
+				<div class="w3-dropdown-click w3-right" style="width:100%;">
+					<button id="services_button" onclick="toggleDropdown('services_dropdown')" class="w3-button branding-secondary branding-hover-tertiary" style="width:100%;">Select a Service</button>
 					<div id="services_dropdown" class="w3-dropdown-content w3-bar-block w3-border">
 					{{ range $elem_val := $.services }}
-						<button class="w3-bar-item w3-button whitetail-hover-sage" onclick="changeService('{{ $.basePath }}', '{{ $elem_val }}')">{{ $elem_val }}</button>
+						<button class="w3-bar-item w3-button branding-hover-primary" onclick="changeService('{{ $.basePath }}', '{{ $elem_val }}')">{{ $elem_val }}</button>
 					{{ end }}
 					</div>
 				</div>
 			</div>
-			<div class="w3-col s3">
-				<button class="w3-button whitetail-brown whitetail-hover-dark-brown w3-right" onclick="refreshLogs('{{ .basePath }}')" style="width:200px;">Refresh Logs</button>
+			<div class="w3-col s2">
+				<button class="w3-button branding-secondary branding-hover-tertiary w3-right" onclick="refreshLogs('{{ .basePath }}')" style="width:100%;">Refresh Logs</button>
 			</div>
 		</div>
+		<br>
 		<div class="w3-row-padding">
-			<label>Keyword list</label>
-			<input class="w3-input" type="text" id="keyword_list">
+			<div class="w3-col s1 w3-cell-bottom">
+				<label style="display:inline-block;">Query String</label>
+			</div>
+			<div class="w3-col s9">
+				<input class="w3-input" type="text" id="query">
+			</div>
+			<div class="w3-col s2">
+				<button class="w3-button branding-secondary branding-hover-tertiary w3-right" onclick="query('{{ .basePath }}')" style="width:100%;">Execute Query</button>
+			</div>
 		</div>
 	</div>
 	<br>
-	<div class="w3-card whitetail-sage w3-container" id="logs">
+	<div class="w3-card branding-primary w3-container" id="logs">
 	</div>
 	<br>
 </div>

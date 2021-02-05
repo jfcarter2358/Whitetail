@@ -1,52 +1,73 @@
 
 var levelList = ['INFO', 'WARN', 'DEBUG', 'TRACE', 'ERROR']
+var PREVIOUS_QUERY = ""
+
+function formatQuery(service, limit) {
+    // hard-coding queries for now
+    // because I can't be bothered to figure out a progromatic
+    // way to generate them
+    if (levelList.length == 0) {
+        return `@service:${service} LIMIT ${limit}`
+    } else if (levelList.length == 1) {
+        return `( @level:${levelList[0]} AND @service:${service} ) LIMIT ${limit}`
+    } else if (levelList.length == 2) {
+        return `( ( @level:${levelList[0]} OR @level:${levelList[1]} ) AND @service:${service} ) LIMIT ${limit}`
+    } else if (levelList.length == 3) {
+        return `( ( ( @level:${levelList[0]} OR @level:${levelList[1]} ) OR @level:${levelList[2]} ) AND @service:${service} ) LIMIT ${limit}`
+    } else if (levelList.length == 4) {
+        return `( ( ( ( @level:${levelList[0]} OR @level:${levelList[1]} ) OR @level:${levelList[2]} ) OR @level:${levelList[3]} ) AND @service:${service} ) LIMIT ${limit}`
+    } else if (levelList.length == 5) {
+        return `( ( ( ( ( @level:${levelList[0]} OR @level:${levelList[1]} ) OR @level:${levelList[2]} ) OR @level:${levelList[3]} ) OR @level:${levelList[4]} ) AND @service:${service} ) LIMIT ${limit}`
+    }
+}
 
 function filterLevel(basePath, level) {
     index = levelList.indexOf(level);
     if (index > -1) {
         levelList.splice(index, 1);
-        $('#' + level).removeClass("whitetail-green")
+        $('#' + level).removeClass("branding-secondary")
         $('#' + level).addClass("whitetail-white")
     } else {
         levelList.push(level)
         $('#' + level).removeClass("whitetail-white")
-        $('#' + level).addClass("whitetail-green")
+        $('#' + level).addClass("branding-secondary")
     }
+    service = $("#services_button").text()
+    lineLimit = $("#line_limit").val()
+    PREVIOUS_QUERY = formatQuery(service, lineLimit)
     refreshLogs(basePath)
 }
 
-function getLogs(basePath) {
-    service = $("#services_button").text()
-    if (service != "Select a Service") {
-        if ($("#live_view").is(':checked')) {
-            keywordList = $("#keyword_list").val()
-            lineLimit = $("#line_limit").val()
-            $.ajax({
-                type: "POST",
-                url: basePath + "/api/logs/" + service,
-                data: JSON.stringify({"limit": lineLimit,"keyword-list": keywordList,"log-levels":levelList}),
-                contentType:"application/json;",
-                dataType:"json",
-                success: function(data, status) {
-                    $("#logs").html(data['logs'])
-                },
-                error: function(data, status) {
-                    console.log(data)
-                }
-            });
+function query(basePath) {
+    queryString = $("#query").val()
+    PREVIOUS_QUERY = queryString
+    console.log(queryString)
+    $.ajax({
+        type: "POST",
+        url: basePath + "/api/logs/query",
+        data: JSON.stringify({"query": queryString}),
+        contentType:"application/json;",
+        dataType:"json",
+        success: function(data, status) {
+            $("#logs").html(data['logs'])
+        },
+        error: function(data, status) {
+            console.log(data)
         }
-    }
+    });
 }
 
 function changeService(basePath, service) {
     $("#services_button").text(service)
     toggleDropdown('services_dropdown')
-    keywordList = $("#keyword_list").val()
     lineLimit = $("#line_limit").val()
+    queryString = formatQuery(service, lineLimit)
+    PREVIOUS_QUERY = queryString
+    console.log(queryString)
     $.ajax({
         type: "POST",
-        url: basePath + "/api/logs/" + service,
-        data: JSON.stringify({"limit": lineLimit,"keyword-list": keywordList,"log-levels":levelList}),
+        url: basePath + "/api/logs/query",
+        data: JSON.stringify({"query": queryString}),
         contentType:"application/json;",
         dataType:"json",
         success: function(data, status) {
@@ -61,12 +82,11 @@ function changeService(basePath, service) {
 function refreshLogs(basePath) {
     service = $("#services_button").text()
     if (service != "Select a Service") {
-        keywordList = $("#keyword_list").val()
-        lineLimit = $("#line_limit").val()
+        console.log(PREVIOUS_QUERY)
         $.ajax({
             type: "POST",
-            url: basePath + "/api/logs/" + service,
-            data: JSON.stringify({"limit": lineLimit,"keyword-list": keywordList,"log-levels":levelList}),
+            url: basePath + "/api/logs/query",
+            data: JSON.stringify({"query": PREVIOUS_QUERY}),
             contentType:"application/json;",
             dataType:"json",
             success: function(data, status) {
