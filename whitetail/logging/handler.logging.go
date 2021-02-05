@@ -58,10 +58,24 @@ var Services []string
 func formatLogMessage(data *LogMessageInput) string{
     // log line format is
     // [ TIMESTAMP ] [ SERVICE ] [ LEVEL ] [ LOGGER ] MESSAGE
+    loggerName := data.LoggerName
+    log.Println(Config.Config.Logging.ConciseLogger)
+    if Config.Config.Logging.ConciseLogger {
+        loggerList := strings.Split(loggerName, ".")
+        temp := ""
+        for index, part := range loggerList {
+            if index == len(loggerList) - 1 {
+                temp = temp + part
+            } else {
+                temp = temp + string(part[0]) + "."
+            }
+        }
+        loggerName = temp
+    }
     message := "[" + data.Timestamp + "] "
     message = message + "[" + data.Service + "] "
     message = message + "[<span class=\"" + data.Level + "\">" + data.Level + "</span>] "
-    message = message + "[" + data.LoggerName + "] "
+    message = message + "[" + loggerName + "] "
     message = message + data.Message + "<br>"
     if data.StackTrace != "" {
         message += strings.ReplaceAll(strings.ReplaceAll(data.StackTrace, "\t", "&emsp;&emsp;&emsp;"), "\n", "<br>")

@@ -100,7 +100,8 @@ An example of a `whitetail` configuraiton file is as follows:
     },
     "logging": {
         "max-age-days": 2,
-        "poll-rate": "1h"
+        "poll-rate": "1h",
+        "concise-logger": true
     },
     "branding": {
         "primary_color": {
@@ -184,12 +185,13 @@ Name       | Description
 
 ### Logging
 
-Logging configuration mainly concerns itself with the cleanup process to remove old logs.
+Logging configuration mainly concerns itself with the cleanup process to remove old logs, however it does also configure some aspects of the log message formatting.
 
-Name           | Description
----------------|------------
-`max-age-days` | How many days to keep logs for (integer)
-`poll-rate`    | How often to check for old logs. Is of the form `< number >< time unit >` where valid time units are `ns`, `us`, `ms`, `s`, `m`, `h`
+Name             | Description
+-----------------|------------
+`max-age-days`   | How many days to keep logs for (integer)
+`poll-rate`      | How often to check for old logs. Is of the form `< number >< time unit >` where valid time units are `ns`, `us`, `ms`, `s`, `m`, `h`
+`concise-logger` | Should the logger name be compaceted for ease of viewing (bool) 
 
 ### Branding
 
