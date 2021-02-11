@@ -21,7 +21,6 @@ type Index struct {
     ID string `json:"id"`
 }
 
-
 var DB *gorm.DB
 
 /* -- Database interactions -- */
@@ -106,6 +105,14 @@ func AddIDToIndex(key, newID string){
 	}
 }
 
+// Update an existsing job with the data provided
+func UpdateIndex(key string, newIndex Index){
+	index, err := GetIndexByKey(key)
+	if err != nil {
+		DB.Model(index).Updates(newIndex)
+	}	
+}
+
 func ParseLog(text, id, timestamp, level, service string) {
 	reg, err := regexp.Compile("[^a-zA-Z0-9\\s]+")
     if err != nil {
@@ -128,9 +135,56 @@ func ParseLog(text, id, timestamp, level, service string) {
 	AddIDToIndex("@month:" + monthString, id)
 	AddIDToIndex("@day:" + dayString, id)
 	AddIDToIndex("@hour:" + hourString, id)
+	AddIDToIndex("@hour:>=" + hourString, id)
+	AddIDToIndex("@hour:<=" + hourString, id)
 	AddIDToIndex("@minute:" + minuteString, id)
+	AddIDToIndex("@minute:>=" + minuteString, id)
+	AddIDToIndex("@minute:<=" + minuteString, id)
 	AddIDToIndex("@second:" + secondString, id)
+	AddIDToIndex("@second:>=" + secondString, id)
+	AddIDToIndex("@second:<=" + secondString, id)
 	AddIDToIndex("@level:" + level, id)
 	AddIDToIndex("@service:" + service, id)
+
+	for i := t.Hour(); i < 24; i++ {
+		AddIDToIndex("@hour:<" + strconv.Itoa(i), id)
+		AddIDToIndex("@hour:<=" + strconv.Itoa(i), id)
+	}
+	for i := t.Hour(); i > 0; i-- {
+		AddIDToIndex("@hour:>" + strconv.Itoa(i - 1), id)
+		AddIDToIndex("@hour:>=" + strconv.Itoa(i), id)
+	}
+
+	for i := t.Minute(); i < 60; i++ {
+		AddIDToIndex("@minute:<" + strconv.Itoa(i), id)
+		AddIDToIndex("@minute:<=" + strconv.Itoa(i), id)
+	}
+	for i := t.Minute(); i > 0; i-- {
+		AddIDToIndex("@minute:>" + strconv.Itoa(i - 1), id)
+		AddIDToIndex("@minute:>=" + strconv.Itoa(i - 1), id)
+	}
+
+	for i := t.Second(); i < 60; i++ {
+		AddIDToIndex("@second:<" + strconv.Itoa(i), id)
+		AddIDToIndex("@second:<=" + strconv.Itoa(i), id)
+	}
+	for i := t.Second(); i > 0; i-- {
+		AddIDToIndex("@second:>" + strconv.Itoa(i - 1), id)
+		AddIDToIndex("@second:>=" + strconv.Itoa(i - 1), id)
+	}
 	AddIDToIndex("@all", id)
+}
+
+func DeleteElementFromIndices(element string) {
+	indices := GetAllIndices()
+	for _, index := range indices {
+		ids := strings.Split(index.IDs, ",")
+		for idx, id := range(ids) {
+			if id == element {
+				newIDs := append(ids[:idx], ids[idx + 1:]...)
+				newIndex := Index{ID: index.ID, IDs: strings.Join(newIDs, ",")}
+				UpdateIndex(index.ID, newIndex)
+			}
+		}
+	}
 }

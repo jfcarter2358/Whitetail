@@ -1,7 +1,7 @@
 # Whitetail
 
 ## Premise
-`Whitetail` is a lightweight alternative to ELK for non-intensive applications. It is built with containerization in mind for a non-resource intensive log viewer with basic search capabilites.
+`Whitetail` is a lightweight alternative to ELK for non-intensive applications. It is built with containerization in mind for a non-resource intensive log viewer with basic metadata search capabilites.
 
 ## TO DO
 - [x] Add settings page
@@ -10,7 +10,9 @@
 - [x] Add query language so that it's not just a keyword search on the logs page
 - [x] Add a log refresh button on the logs page
 - [x] Add filtered by log level
-- [ ] Add log age cleanup
+- [x] Add log age cleanup
+- [ ] Add content to home page
+- [ ] Add analytics page
 - [x] Add configurable branding
 - [x] Add 'Reset to Default' buittons in settings page
 - [x] Add configuration section to README
@@ -20,6 +22,19 @@
 - [ ] Make level list unaccessable unless service is selected
 - [x] Break logs and query out into separate pages
 - [x] Improve logs page performance
+- [x] Add logger name tooltip
+- [ ] Add query page AQL help box
+- [ ] Add Log backup capabilities/config option
+- [ ] Add Log backup to S3 capabilities/config option
+- [x] Add `${time unit} > ${value}` indices
+- [x] Add `${time unit} >= ${value}` indices
+- [x] Add `${time unit} <$ {value}` indices
+- [x] Add `${time unit} <= ${value}` indices
+- [ ] Make `[enter]` on query screen execute query
+- [x] Optimize AST query
+- [x] Remove UUIDs from indices on delete
+- [ ] Move backend serach to use Sonic
+- Release 1.0
 - [ ] Any other tasks I'll inevitably think of later
 
 ## Antler Query Language (AQL)
@@ -40,16 +55,14 @@ If you want to change the 'OR' statements to include more than just the two leve
 The various filters that can be used in AQL statements are as follows (`< text like this is a placeholder >`):
 Filter                 | Desrciption
 -----------------------|------------
-`@level:< level >`     | Get logs with level `< level >`
-`@service:< service >` | Get logs from service `< service >`
-`@year:< year >`       | Get logs wtih a timestamp that has the year `< year >`
-`@month:< month >`     | Get logs wtih a timestamp that has the year `< month >`
-`@day:< day >`         | Get logs wtih a timestamp that has the year `< day >`
-`@hour:< hour >`       | Get logs wtih a timestamp that has the year `< hour >`
-`@minute:< minute >`   | Get logs wtih a timestamp that has the year `< minute >`
-`@second:< second >`   | Get logs wtih a timestamp that has the year `< second >`
-`< word >`             | Get logs whose message includes `< word >`
-`@all`                 | Get all logs
+`level = < level >`     | Get logs with level `< level >`
+`service = < service >` | Get logs from service `< service >`
+`year = < year >`       | Get logs wtih a timestamp that has the year `< year >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
+`month = < month >`     | Get logs wtih a timestamp that has the year `< month >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
+`day = < day >`         | Get logs wtih a timestamp that has the year `< day >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
+`hour = < hour >`       | Get logs wtih a timestamp that has the year `< hour >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
+`minute = < minute >`   | Get logs wtih a timestamp that has the year `< minute >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
+`second = < second >`   | Get logs wtih a timestamp that has the year `< second >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
 
 ### Operators
 The various operators are shown below with examples
@@ -71,17 +84,29 @@ The various operators are shown below with examples
 - __ORDER_ASCEND__
     - `< left filter > ORDER_ASCEND < field >`
     - Orders the results of the left filter in ascending order by one of the following fields
-        - Level
-        - Service
-        - Text
-        - Timestamp
+        - level
+        - service
+        - text
+        - timestamp
+        - year
+        - month
+        - day
+        - hour
+        - minute
+        - second
 - __ORDER_DESCEND__
     - `< left filter > ORDER_DESCEND < field >`
     - Orders the results of the left filter in descending order by one of the following fields
-        - Level
-        - Service
-        - Text
-        - Timestamp
+        - level
+        - service
+        - text
+        - timestamp
+        - year
+        - month
+        - day
+        - hour
+        - minute
+        - second
 
 ## Configuration
 
@@ -191,7 +216,7 @@ Name             | Description
 -----------------|------------
 `max-age-days`   | How many days to keep logs for (integer)
 `poll-rate`      | How often to check for old logs. Is of the form `< number >< time unit >` where valid time units are `ns`, `us`, `ms`, `s`, `m`, `h`
-`concise-logger` | Should the logger name be compaceted for ease of viewing (bool) 
+`concise-logger` | Should the logger name be compaceted for ease of viewing (bool)
 
 ### Branding
 

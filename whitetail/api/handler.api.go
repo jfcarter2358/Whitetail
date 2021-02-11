@@ -34,14 +34,13 @@ func QueryLogs(c *gin.Context) {
 		return
 	}
 
-	ids := AST.Parse(input.Query)
-	
+	// ids := AST.Parse(input.Query)
+	logs := AST.Parse(input.Query)
+	// logs := Logging.Query(input.Query)
+
 	logMessages := []string{}
-	for _, id := range(ids) {
-		log, err := Logging.GetLogByID(id)
-		if err == nil {
-			logMessages = append(logMessages, log.Text)
-		}
+	for _, log := range(logs) {
+		logMessages = append(logMessages, log.Text)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"logs": logMessages})

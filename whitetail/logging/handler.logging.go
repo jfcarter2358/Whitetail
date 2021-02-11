@@ -20,6 +20,7 @@ import (
     "sort"
     "whitetail/config"
     "gorm.io/gorm/logger"
+    // "github.com/expectedsh/go-sonic/sonic"
 )
 
 type LogMessageInput struct {
@@ -44,6 +45,12 @@ type Log struct {
     Timestamp  string
     Service    string
     ID         string
+    Year       int
+    Month      int
+    Day        int
+    Hour       int
+    Minute     int
+    Second     int
 }
 
 type LogRequestInput struct {
@@ -54,6 +61,8 @@ type LogRequestInput struct {
 
 var DB *gorm.DB
 var Services []string
+// var ingester sonic.Ingestable
+// var search sonic.Searchable
 
 func formatLogMessage(data *LogMessageInput) string{
     // log line format is
@@ -128,6 +137,18 @@ func ConnectDataBase(db_type string, postgresConfig *Config.PostgresConfigObject
             Services = append(Services, log.Service)
         }
     }
+
+    // connect to sonic
+    /*
+    ingester, err = sonic.NewIngester("localhost", 1491, "Pi314159")
+    if err != nil {
+        panic(err)
+    }
+    search, err = sonic.NewSearch("localhost", 1491, "Pi314159")
+    if err != nil {
+        panic(err)
+    }
+    */
 }
 
 func GetLogCount() int {
@@ -193,6 +214,7 @@ func DeleteLogByID(id string) error{
 		return errors.New("Log not found")
 	}
 	DB.Delete(&log)
+    Index.DeleteElementFromIndices(id)
 	return nil
 }
 
@@ -246,10 +268,22 @@ func GetLogByServiceAndID(id, service string) (*Log, error) {
 	return &log, nil
 }
 
+func Query(query string) []Log{
+    var logs []Log
+    log.Println(query)
+    // DB.Where(query).Find(&logs)
+    DB.Where("service = ?", "foobar").Find(&logs)
+    log.Println(len(logs))
+    return logs
+}
+
 func CreateNewLog(text, level, timestamp, service, rawMessage string) (*Log, error) {
 	id := uuid.New().String()
 
-	log := Log{Text: text, Level: level, Timestamp: timestamp, Service: service, ID: id}
+    layout := "2006-01-02T15:04:05"
+	t, _ := time.Parse(layout, timestamp)
+
+	log := Log{Text: text, Level: level, Timestamp: timestamp, Service: service, ID: id, Year: t.Year(), Month: int(t.Month()), Day: t.Day(), Hour: t.Hour(), Minute: t.Minute(), Second: t.Second()}
 
     DB.Create(&log)
     
@@ -257,6 +291,10 @@ func CreateNewLog(text, level, timestamp, service, rawMessage string) (*Log, err
 
 	return &log, nil
 }
+
+// func AddLogToSonic(text) {
+
+// }
 
 /* -- TCP and UDP -- */
 
@@ -297,7 +335,6 @@ func StartUDPServer(conn_port int) {
     buf := make([]byte, 1024)
     for {
         n, _, _ := ServerConn.ReadFromUDP(buf)
-        log.Println("Got UDP data")
         parseData(string(buf[0:n]))
     }
 }
