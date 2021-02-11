@@ -55,8 +55,8 @@ If you want to change the 'OR' statements to include more than just the two leve
 The various filters that can be used in AQL statements are as follows (`< text like this is a placeholder >`):
 Filter                 | Desrciption
 -----------------------|------------
-`level = < level >`     | Get logs with level `< level >`
-`service = < service >` | Get logs from service `< service >`
+`level = < level >`     | Get logs with level `< level >` (`= < level >` can be replaced with `IN < csv of levels >`)
+`service = < service >` | Get logs from service `< service >` (`= < service >` can be replaced with `IN < csv of services >`)
 `year = < year >`       | Get logs wtih a timestamp that has the year `< year >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
 `month = < month >`     | Get logs wtih a timestamp that has the year `< month >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
 `day = < day >`         | Get logs wtih a timestamp that has the year `< day >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)

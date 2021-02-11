@@ -2,7 +2,7 @@ package AST
 
 import (
     "strings"
-    "log"
+    // "log"
 	"regexp"
 	// "whitetail/index"
 	"github.com/google/uuid"
@@ -81,11 +81,13 @@ func Parse(query string) []Logging.Log {
 func parseQuery(query string) *gorm.DB {
 	pattern := regexp.MustCompile(`(\S*)\s?(=|>|>=|<=|<|!=|IN)\s?(\S*)`)
 	groups := pattern.FindStringSubmatch(query)
-	log.Println(query)
-	log.Println(groups[1] + " " + groups[2] + " ?")
-	log.Println(groups[3])
+	// log.Println(query)
+	// log.Println(groups[1] + " " + groups[2] + " ?")
+	// log.Println(groups[3])
 	if groups[2] == "IN" {
-		Logging.DB.Where(groups[1] + " " + groups[2] + " ?", strings.Split(groups[3], ","))
+		// log.Println("IN")
+		// log.Println(strings.Split(groups[3], ","))
+		return Logging.DB.Where(groups[1] + " " + groups[2] + " ?", strings.Split(groups[3], ","))
 	}
 	return Logging.DB.Where(groups[1] + " " + groups[2] + " ?", groups[3])
 }
@@ -148,12 +150,13 @@ func NOT(l, r *gorm.DB) *gorm.DB {
 }
 
 func XOR(l, r *gorm.DB) *gorm.DB {
-	// return l.Xor(r)
-	return nil
+	return NOT(OR(l, r), AND(l, r))
 }
 
 func LIMIT(l *gorm.DB, r string) *gorm.DB {
 	limit, err := strconv.Atoi(r)
+	// log.Println("LIMIT")
+	// log.Println(limit)
 	if err != nil {
 		return nil
 	}
@@ -161,10 +164,14 @@ func LIMIT(l *gorm.DB, r string) *gorm.DB {
 }
 
 func ORDER_ASCEND(l * gorm.DB, r string) *gorm.DB {
+	// log.Println("ORDER_ASCEND")
+	// log.Println(r)
 	return l.Order(r)
 }
 
 func ORDER_DESCEND(l * gorm.DB, r string) *gorm.DB {
+	// log.Println("ORDER_DESCEND")
+	// log.Println(r)
 	return l.Order(r + " desc")
 }
 

@@ -2,12 +2,6 @@
 var levelList = ['INFO', 'WARN', 'DEBUG', 'TRACE', 'ERROR']
 
 function formatQuery(service, limit) {
-    // hard-coding queries for now
-    // because I can't be bothered to figure out a progromatic
-    // way to generate them
-    
-
-    maxLimit = parseInt(limit) * 5
     if (levelList.length == 0) {
         return ""
     } else {
@@ -15,7 +9,7 @@ function formatQuery(service, limit) {
         for (var i = 1; i < levelList.length; i++) {
             infoList = infoList + "," + levelList[i]
         }
-        return `((service = ${service} AND level IN ${infoList}) ORDER_ASCEND timestamp) LIMIT ${limit}`
+        return `((service = ${service} AND level IN ${infoList}) ORDER_DESCEND timestamp) LIMIT ${limit}`
     }
 }
 
@@ -33,7 +27,6 @@ function filterLevel(basePath, level) {
     }
     service = $("#services_button").text()
     lineLimit = $("#line_limit").val()
-    document.getElementById("loader").style.display = "block";
     refreshLogs(basePath)
 }
 
@@ -42,30 +35,10 @@ function changeService(basePath, service) {
     toggleDropdown('services_dropdown')
     lineLimit = $("#line_limit").val()
     queryString = formatQuery(service, lineLimit)
-    console.log(queryString)
-    document.getElementById("loader").style.display = "block";
-    $.ajax({
-        type: "POST",
-        url: basePath + "/api/logs/query",
-        data: JSON.stringify({"query": queryString}),
-        contentType:"application/json;",
-        dataType:"json",
-        success: function(data, status) {
-            $("#logs").html(data['logs'])
-            document.getElementById("loader").style.display = "none";
-        },
-        error: function(data, status) {
-            document.getElementById("loader").style.display = "none";
-            console.log(data)
-        }
-    });
-}
-
-function refreshLogs(basePath) {
-    service = $("#services_button").text()
-    if (service != "Select a Service") {
-        lineLimit = $("#line_limit").val()
-        queryString = formatQuery(service, lineLimit)
+    if (queryString == "" ) {
+        $("#logs").html("")
+    } else {
+        document.getElementById("loader").style.display = "block";
         $.ajax({
             type: "POST",
             url: basePath + "/api/logs/query",
@@ -77,9 +50,36 @@ function refreshLogs(basePath) {
                 document.getElementById("loader").style.display = "none";
             },
             error: function(data, status) {
-                console.log(data)
                 document.getElementById("loader").style.display = "none";
+                console.log(data)
             }
         });
+    }
+}
+
+function refreshLogs(basePath) {
+    service = $("#services_button").text()
+    if (service != "Select a Service") {
+        lineLimit = $("#line_limit").val()
+        queryString = formatQuery(service, lineLimit)
+        if (queryString == "" ) {
+            $("#logs").html("")
+        } else {
+            $.ajax({
+                type: "POST",
+                url: basePath + "/api/logs/query",
+                data: JSON.stringify({"query": queryString}),
+                contentType:"application/json;",
+                dataType:"json",
+                success: function(data, status) {
+                    $("#logs").html(data['logs'])
+                    document.getElementById("loader").style.display = "none";
+                },
+                error: function(data, status) {
+                    console.log(data)
+                    document.getElementById("loader").style.display = "none";
+                }
+            });
+        }
     }
 }
