@@ -15,7 +15,8 @@
     "logging": {
         "max-age-days": 2,
         "poll-rate": "1h",
-        "concise-logger": true
+        "concise-logger": true,
+        "hoverable-long-logger": false
     },
     "branding": {
         "primary_color": {

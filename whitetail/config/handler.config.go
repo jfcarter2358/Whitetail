@@ -39,16 +39,16 @@ type BrandingConfigObject struct {
 	PrimaryColor   ColorConfigObject `json:"primary_color" binding:"required"`
 	SecondaryColor ColorConfigObject `json:"secondary_color" binding:"required"`
 	TertiaryColor  ColorConfigObject `json:"tertiary_color" binding:"required"`
-	INFOColor      string `json:"INFO_color" binding:"required"`
-	WARNColor      string `json:"WARN_color" binding:"required"`
-	DEBUGColor     string `json:"DEBUG_color" binding:"required"`
-	TRACEColor     string `json:"TRACE_color" binding:"required"`
-	ERRORColor     string `json:"ERROR_color" binding:"required"`
+	INFOColor      string            `json:"INFO_color" binding:"required"`
+	WARNColor      string            `json:"WARN_color" binding:"required"`
+	DEBUGColor     string            `json:"DEBUG_color" binding:"required"`
+	TRACEColor     string            `json:"TRACE_color" binding:"required"`
+	ERRORColor     string            `json:"ERROR_color" binding:"required"`
 }
 
 type ColorConfigObject struct {
 	Background string `json:"background" binding:"required"`
-	Text string `json:"text" binding:"required"`
+	Text       string `json:"text" binding:"required"`
 }
 
 type SqliteConfigObject struct {
@@ -56,9 +56,10 @@ type SqliteConfigObject struct {
 }
 
 type LoggingConfigObject struct { 
-	MaxAgeDays int `json:"max-age-days"`
-	PollRate string `json:"poll-rate"`
-	ConciseLogger bool `json:"concise-logger"`
+	MaxAgeDays          int `json:"max-age-days"`
+	PollRate            string `json:"poll-rate"`
+	ConciseLogger       bool `json:"concise-logger"`
+	HoverableLongLogger bool `json:"hoverable-long-logger"`
 }
 
 var Config ConfigObject

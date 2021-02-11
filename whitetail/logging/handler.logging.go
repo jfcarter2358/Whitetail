@@ -80,7 +80,11 @@ func formatLogMessage(data *LogMessageInput) string{
                 loggerName = loggerName + string(part[0]) + "."
             }
         }
-        message = message + "[<span class=\"w3-tooltip\">" + loggerName + "<span class=\"w3-text\">&nbsp;(" + data.LoggerName + ")</span></span>] "
+        if Config.Config.Logging.HoverableLongLogger {
+            message = message + "[<span class=\"w3-tooltip\">" + loggerName + "<span class=\"w3-text\">&nbsp;(" + data.LoggerName + ")</span></span>] "
+        } else {
+            message = message + "[" + loggerName + "] "
+        }
     } else {
         message = message + "[" + data.LoggerName + "] "
     }

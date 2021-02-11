@@ -18,7 +18,7 @@ type AST struct {
 	Right     string
 }
 
-func Parse(query string) []Logging.Log {
+func Parse(query string) *gorm.DB {
 	// fix query string formatting
 	lCleanup1 := regexp.MustCompile(`\((\S)`)
 	lCleanup2 := regexp.MustCompile(`(\S)\(`)
@@ -66,16 +66,10 @@ func Parse(query string) []Logging.Log {
 
 	if didMatch == false {
 		out := parseQuery(query[2:len(query) - 2])
-		var logs []Logging.Log
-
-		out.Find(&logs)
-		return logs
+		return out
 	}
 	out := Operate(topAST, ASTs)
-	var logs []Logging.Log
-
-	out.Find(&logs)
-	return logs
+	return out
 }
 
 func parseQuery(query string) *gorm.DB {
