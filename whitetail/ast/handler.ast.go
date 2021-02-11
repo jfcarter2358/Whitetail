@@ -48,7 +48,7 @@ func Parse(query string) []Logging.Log {
 	// create our map of trees to hold the structure of the query
 	ASTs := make(map[string]AST)
 
-	pattern := regexp.MustCompile(`\(\s(\S*\s?(?:=|>|>=|<=|<|!=)\s?\S*|\S*)\s(AND|OR|NOT|XOR|LIMIT|ORDER_ASCEND|ORDER_DESCEND)\s(\S*\s?(?:=|>|>=|<=|<|!=)\s?\S*|\S*)\s\)`)
+	pattern := regexp.MustCompile(`\(\s(\S*\s?(?:=|>|>=|<=|<|!=|IN)\s?\S*|\S*)\s(AND|OR|NOT|XOR|LIMIT|ORDER_ASCEND|ORDER_DESCEND)\s(\S*\s?(?:=|>|>=|<=|<|!=|IN)\s?\S*|\S*)\s\)`)
 	topAST := AST{}
 	didMatch := false
 	for true {
@@ -79,11 +79,14 @@ func Parse(query string) []Logging.Log {
 }
 
 func parseQuery(query string) *gorm.DB {
-	pattern := regexp.MustCompile(`(\S*)\s?(=|>|>=|<=|<|!=)\s?(\S*)`)
+	pattern := regexp.MustCompile(`(\S*)\s?(=|>|>=|<=|<|!=|IN)\s?(\S*)`)
 	groups := pattern.FindStringSubmatch(query)
 	log.Println(query)
 	log.Println(groups[1] + " " + groups[2] + " ?")
 	log.Println(groups[3])
+	if groups[2] == "IN" {
+		Logging.DB.Where(groups[1] + " " + groups[2] + " ?", strings.Split(groups[3], ","))
+	}
 	return Logging.DB.Where(groups[1] + " " + groups[2] + " ?", groups[3])
 }
 

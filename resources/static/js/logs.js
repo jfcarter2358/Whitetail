@@ -5,21 +5,20 @@ function formatQuery(service, limit) {
     // hard-coding queries for now
     // because I can't be bothered to figure out a progromatic
     // way to generate them
+    
+
     maxLimit = parseInt(limit) * 5
     if (levelList.length == 0) {
         return ""
-    } else if (levelList.length == 1) {
-        return `(((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[0]}) ORDER_ASCEND timestamp) LIMIT ${limit}`
-    } else if (levelList.length == 2) {
-        return `(((((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[0]}) LIMIT ${limit}) OR (((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[1]}) LIMIT ${limit})) ORDER_ASCEND timestamp) LIMIT ${limit}`
-    } else if (levelList.length == 3) {
-        return `((((((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[0]}) LIMIT ${limit}) OR (((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[1]}) LIMIT ${limit})) OR (((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[2]}) LIMIT ${limit})) ORDER_ASCEND timestamp) LIMIT ${limit}`
-    } else if (levelList.length == 4) {
-        return `(((((((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[0]}) LIMIT ${limit}) OR (((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[1]}) LIMIT ${limit})) OR (((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[2]}) LIMIT ${limit})) OR (((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[3]}) LIMIT ${limit})) ORDER_ASCEND timestamp) LIMIT ${limit}`
-    } else if (levelList.length == 5) {
-        return `((((((((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[0]}) LIMIT ${limit}) OR (((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[1]}) LIMIT ${limit})) OR (((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[2]}) LIMIT ${limit})) OR (((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[3]}) LIMIT ${limit})) OR (((service = ${service} LIMIT ${maxLimit}) AND level = ${levelList[4]}) LIMIT ${limit})) ORDER_ASCEND timestamp) LIMIT ${limit}`
+    } else {
+        infoList = levelList[0]
+        for (var i = 1; i < levelList.length; i++) {
+            infoList = infoList + "," + levelList[i]
+        }
+        return `((service = ${service} AND level IN ${infoList}) ORDER_ASCEND timestamp) LIMIT ${limit}`
     }
 }
+
 
 function filterLevel(basePath, level) {
     index = levelList.indexOf(level);
