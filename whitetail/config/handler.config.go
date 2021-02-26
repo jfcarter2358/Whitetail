@@ -22,17 +22,7 @@ type ConfigObject struct {
 }
 
 type DatabaseConfigObject struct {
-	Type     string
-	Postgres *PostgresConfigObject `json:"postgres"`
-	Sqlite   *SqliteConfigObject   `json:"sqlite"`
-}
-
-type PostgresConfigObject struct {
-	Host     string `json:"host"`
-	Port     int    `json:"port"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Database string `json:"database"`
+	URL     string `json:"url"`
 }
 
 type BrandingConfigObject struct {
@@ -49,10 +39,6 @@ type BrandingConfigObject struct {
 type ColorConfigObject struct {
 	Background string `json:"background" binding:"required"`
 	Text       string `json:"text" binding:"required"`
-}
-
-type SqliteConfigObject struct {
-	Path string `json:"path"`
 }
 
 type LoggingConfigObject struct { 
@@ -83,16 +69,6 @@ func ReadConfigFile() *ConfigObject{
 
 	// defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
-
-	if Config.Database.Postgres != nil {
-		log.Println("postgres")
-		Config.Database.Type = "postgres"
-	} else if Config.Database.Sqlite != nil {
-		log.Println("sqlite")
-		Config.Database.Type = "sqlite"
-	} else {
-		panic("No database config found")
-	}
 
 	UpdateBranding()
 	InitLogoIcon()

@@ -4,9 +4,7 @@
     "udp-port": 9003,
     "basepath": "",
     "database": {
-        "sqlite": {
-            "path": "./data/whitetail.db"
-        }
+        "url": "http://localhost:9090"
     },
     "logging": {
         "max-age-days": 2,
@@ -21,7 +19,7 @@
         },
         "secondary_color": {
             "background": "#8F7E4F",
-            "text": "#000000"
+            "text": "#ffffff"
         },
         "tertiary_color": {
             "background": "#524632",

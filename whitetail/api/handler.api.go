@@ -10,7 +10,7 @@ import (
 	"log"
 	"strconv"
 	"path/filepath"
-	"whitetail/ast"
+	// "whitetail/ast"
 	"os"
 	"io"
 )
@@ -34,6 +34,7 @@ func QueryLogs(c *gin.Context) {
 		return
 	}
 
+	/*
 	db := AST.Parse(input.Query)
 	logMessages := []string{}
 	var logs []Logging.Log
@@ -42,10 +43,13 @@ func QueryLogs(c *gin.Context) {
 	for _, log := range(logs) {
 		logMessages = append(logMessages, log.Text)
 	}
+	*/
+	logMessages := Logging.Query(input.Query)
 
 	c.JSON(http.StatusOK, gin.H{"logs": logMessages})
 }
 
+/*
 func GetLogsByService(c *gin.Context) {
 	service := c.Param("service")
 	var input Logging.LogRequestInput
@@ -71,6 +75,7 @@ func GetLogsByService(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"logs": logMessages})
 }
+*/
 
 func UpdateLogo(c *gin.Context) {
 	file, err := c.FormFile("file")

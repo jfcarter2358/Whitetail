@@ -8,18 +8,19 @@ import (
     "strings"
     "bytes"
     "time"
-    "gorm.io/gorm"
-    "gorm.io/driver/sqlite"
-    "gorm.io/driver/postgres"
+    // "gorm.io/gorm"
+    // "gorm.io/driver/sqlite"
+    // "gorm.io/driver/postgres"
     "log"
-    "net/url"
-    "errors"
-    "github.com/google/uuid"
+    // "net/url"
+    // "errors"
+    // "github.com/google/uuid"
     "strconv"
-    "whitetail/index"
-    "sort"
+    // "whitetail/index"
+    // "sort"
     "whitetail/config"
-    "gorm.io/gorm/logger"
+    // "gorm.io/gorm/logger"
+    "whitetail/ceres"
     // "github.com/expectedsh/go-sonic/sonic"
 )
 
@@ -59,7 +60,7 @@ type LogRequestInput struct {
     LogLevels   []string `json:"log-levels"`
 }
 
-var DB *gorm.DB
+// var DB *gorm.DB
 var Services []string
 // var ingester sonic.Ingestable
 // var search sonic.Searchable
@@ -85,10 +86,12 @@ func formatLogMessage(data *LogMessageInput) string{
         } else {
             message = message + "[" + loggerName + "] "
         }
+        message = strings.TrimSuffix(message, "\n")
+        message = strings.TrimSuffix(message, "<br>")
     } else {
         message = message + "[" + data.LoggerName + "] "
     }
-    message = message + data.Message + "<br>"
+    message = message + data.Message
     if data.StackTrace != "" {
         message += strings.ReplaceAll(strings.ReplaceAll(data.StackTrace, "\t", "&emsp;&emsp;&emsp;"), "\n", "<br>")
     }
@@ -96,7 +99,7 @@ func formatLogMessage(data *LogMessageInput) string{
 }
 
 /* -- Database interactions -- */
-
+/*
 func ConnectDataBase(db_type string, postgresConfig *Config.PostgresConfigObject, sqliteConfig *Config.SqliteConfigObject) {
     var err error
     var database *gorm.DB
@@ -141,20 +144,10 @@ func ConnectDataBase(db_type string, postgresConfig *Config.PostgresConfigObject
             Services = append(Services, log.Service)
         }
     }
-
-    // connect to sonic
-    /*
-    ingester, err = sonic.NewIngester("localhost", 1491, "Pi314159")
-    if err != nil {
-        panic(err)
-    }
-    search, err = sonic.NewSearch("localhost", 1491, "Pi314159")
-    if err != nil {
-        panic(err)
-    }
-    */
 }
+*/
 
+/*
 func GetLogCount() int {
 	logs := GetAllLogs()
 	return len(logs)
@@ -166,7 +159,9 @@ func GetAllLogs() []Log {
 	
 	return logs
 }
+*/
 
+/*
 func GetLogsFromIndex(keyString, service string, limit int, logLevels []string) []Log {
     keys := strings.Split(keyString, ",")
     logs := []Log{}
@@ -211,7 +206,9 @@ func GetLogsFromIndex(keyString, service string, limit int, logLevels []string) 
     }
     return filteredLogs
 }
+*/
 
+/*
 func DeleteLogByID(id string) error{
 	log, err := GetLogByID(id)
 	if err != nil {
@@ -271,35 +268,52 @@ func GetLogByServiceAndID(id, service string) (*Log, error) {
 	}
 	return &log, nil
 }
+*/
 
-func Query(query string) []Log{
-    var logs []Log
+func Query(query string) []string{
+    var logs []string
     log.Println(query)
+
+    data := Ceres.Query(query)
+    for _, datum := range(data) {
+        logs = append(logs, datum.Message)
+    }
+
     // DB.Where(query).Find(&logs)
-    DB.Where("service = ?", "foobar").Find(&logs)
+    // DB.Where("service = ?", "foobar").Find(&logs)
     log.Println(len(logs))
     return logs
 }
 
 func CreateNewLog(text, level, timestamp, service, rawMessage string) (*Log, error) {
-	id := uuid.New().String()
+	// id := uuid.New().String()
 
     layout := "2006-01-02T15:04:05"
 	t, _ := time.Parse(layout, timestamp)
 
-	log := Log{Text: text, Level: level, Timestamp: timestamp, Service: service, ID: id, Year: t.Year(), Month: int(t.Month()), Day: t.Day(), Hour: t.Hour(), Minute: t.Minute(), Second: t.Second()}
+	// log := Log{Text: text, Level: level, Timestamp: timestamp, Service: service, ID: id, Year: t.Year(), Month: int(t.Month()), Day: t.Day(), Hour: t.Hour(), Minute: t.Minute(), Second: t.Second()}
 
-    DB.Create(&log)
+    // DB.Create(&log)
     
-    Index.ParseLog(rawMessage, id, timestamp, level, service)
+    // Index.ParseLog(rawMessage, id, timestamp, level, service)
 
-	return &log, nil
+    log := make(map[string]interface{})
+    log["message"] = text
+    log["level"] = level
+    log["service"] = service
+    log["timestamp"] = timestamp
+    log["year"] = t.Year()
+    log["month"] = int(t.Month())
+    log["day"] = t.Day()
+    log["hour"] = t.Hour()
+    log["minute"] = t.Minute()
+    log["second"] = t.Second()
+
+    Ceres.Insert([]map[string]interface{}{log})
+
+	// return &log, nil
+    return nil, nil
 }
-
-// func AddLogToSonic(text) {
-
-// }
-
 /* -- TCP and UDP -- */
 
 func StartTCPServer(conn_port int) {
@@ -427,6 +441,8 @@ func Cleanup() {
         time.Sleep(poll)
         log.Println("Cleaning up...")
         t := time.Now()
+        cutoff := t.AddDate(0, 0, -1 * Config.Config.Logging.MaxAgeDays)
+        /*
         cutoff := t.AddDate(0, 0, -1 * Config.Config.Logging.MaxAgeDays).Format("2006-01-02T15:04:05")
         logs := GetAllLogs()
         cleanupCount := 0
@@ -436,6 +452,9 @@ func Cleanup() {
                 DeleteLogByID(log.ID)
             }
         }
-        log.Println("Cleaned up " + strconv.Itoa(cleanupCount) + " logs")
+        */
+        Ceres.Query(fmt.Sprintf("DELETEBY (((((year <= %d AND month <= %d) AND day <= %d) AND hour <= %d) AND minute <= %d) AND second <= %d)", cutoff.Year(), int(cutoff.Month()), cutoff.Day(), cutoff.Hour(), cutoff.Minute(), cutoff.Second()))
+        // log.Println("Cleaned up " + strconv.Itoa(cleanupCount) + " logs")
+        log.Println("Cleaned up logs")
     }
 }

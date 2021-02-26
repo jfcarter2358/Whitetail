@@ -5,11 +5,9 @@ data:
       "http-port": 9001,
       "tcp-port": 9002,
       "udp-port": 9003,
-      "basepath": "/whitetail",
+      "basepath": "",
       "database": {
-        "sqlite": {
-          "path": "./data/whitetail.db"
-        }
+        "url": "http://localhost:9090"
       },
       "logging": {
         "max-age": "2d"
@@ -26,7 +24,12 @@ data:
         "tertiary_color": {
           "background": "#524632",
           "text": "#ffffff"
-        }
+        },
+        "INFO_color": "#4f772d",
+        "WARN_color": "#e24e1b",
+        "DEBUG_color": "#2b50aa",
+        "TRACE_color": "#610345",
+        "ERROR_color": "#95190c"
       }
     }
 kind: ConfigMap

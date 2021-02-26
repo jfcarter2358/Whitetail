@@ -5,11 +5,9 @@ data:
       "http-port": 9001,
       "tcp-port": 9002,
       "udp-port": 9003,
-      "basepath": "",
+      "basepath": "/whitetail",
       "database": {
-        "sqlite": {
-          "path": "./data/whitetail.db"
-        }
+        "url": "http://localhost:9090"
       },
       "logging": {
         "max-age": "2d"

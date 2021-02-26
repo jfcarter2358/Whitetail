@@ -1,10 +1,9 @@
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   labels:
-    app: whitetail
-  name: whitetail-pvc
+    app: ceres
+  name: ceres-pvc
 spec:
   accessModes:
   - ReadWriteOnce

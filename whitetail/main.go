@@ -8,8 +8,9 @@ import (
 	"log"
 	"whitetail/logging"
 	"whitetail/config"
-	"whitetail/index"
+	// "whitetail/index"
 	// "whitetail/ast"
+	"whitetail/ceres"
 	"strconv"
 )
 
@@ -23,8 +24,9 @@ func main() {
 	routerPort := ":" + strconv.Itoa(Config.Config.HTTPPort)
 
 	// Read in the compass data from the json file
-	Logging.ConnectDataBase(Config.Config.Database.Type, Config.Config.Database.Postgres, Config.Config.Database.Sqlite)
-	Index.ConnectDataBase(Config.Config.Database.Type, Config.Config.Database.Postgres, Config.Config.Database.Sqlite)
+	// Logging.ConnectDataBase(Config.Config.Database.Type, Config.Config.Database.Postgres, Config.Config.Database.Sqlite)
+	// Index.ConnectDataBase(Config.Config.Database.Type, Config.Config.Database.Postgres, Config.Config.Database.Sqlite)
+	Ceres.InitConfig(Config.Config.Database.URL)
 	basePath := Config.Config.BasePath
 	log.Print("Running with base path: " + basePath)
 

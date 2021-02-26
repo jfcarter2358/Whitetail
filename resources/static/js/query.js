@@ -8,7 +8,11 @@ function query(basePath) {
         contentType:"application/json;",
         dataType:"json",
         success: function(data, status) {
-            $("#logs").html(data['logs'])
+            logOut = ''
+            for (var i = 0; i < data['logs'].length; i++) {
+                logOut += data['logs'][i] + "<br>"
+            }
+            $("#logs").html(logOut)
             document.getElementById("loader").style.display = "none";
         },
         error: function(data, status) {

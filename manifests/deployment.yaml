@@ -18,7 +18,7 @@ spec:
       name: whitetail
     spec:
       containers:
-      - image: johncarterodg/whitetail:0.5
+      - image: johncarterodg/whitetail:0.6
         imagePullPolicy: Always
         name: whitetail
         ports:
@@ -39,10 +39,29 @@ spec:
         tty: true
         volumeMounts:
         - mountPath: /whitetail/config
-          name: config-vol
+          name: whitetail-config-vol
+      - image: johncarterodg/ceres-prototype:dev
+        imagePullPolicy: Always
+        name: ceres
+        ports:
+        - containerPort: 9090
+          name: ceres-http
+          protocol: TCP
+        resources:
+          limits:
+            memory: 1Gi
+            cpu: "1"
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /ceres/ceres_home/config
+          name: ceres-config-vol
       hostname: whitetail
       restartPolicy: Always
       volumes:
       - configMap:
           name: whitetail-config-configmap
-        name: config-vol
+        name: whitetail-config-vol
+      - configMap:
+          name: ceres-config-configmap
+        name: ceres-config-vol

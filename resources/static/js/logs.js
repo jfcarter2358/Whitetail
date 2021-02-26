@@ -9,7 +9,7 @@ function formatQuery(service, limit) {
         for (var i = 1; i < levelList.length; i++) {
             infoList = infoList + "," + levelList[i]
         }
-        return `((service = ${service} AND level IN ${infoList}) ORDER_DESCEND timestamp) LIMIT ${limit}`
+        return `SELECTBY (((service = ${service} AND level IN ${infoList}) ORDERBY timestamp) LIMIT ${limit})`
     }
 }
 
@@ -46,7 +46,11 @@ function changeService(basePath, service) {
             contentType:"application/json;",
             dataType:"json",
             success: function(data, status) {
-                $("#logs").html(data['logs'])
+                logOut = ''
+                for (var i = 0; i < data['logs'].length; i++) {
+                    logOut += data['logs'][i] + "<br>"
+                }
+                $("#logs").html(logOut)
                 document.getElementById("loader").style.display = "none";
             },
             error: function(data, status) {
@@ -72,7 +76,11 @@ function refreshLogs(basePath) {
                 contentType:"application/json;",
                 dataType:"json",
                 success: function(data, status) {
-                    $("#logs").html(data['logs'])
+                    logOut = ''
+                    for (var i = 0; i < data['logs'].length; i++) {
+                        logOut += data['logs'][i] + "<br>"
+                    }
+                    $("#logs").html(logOut)
                     document.getElementById("loader").style.display = "none";
                 },
                 error: function(data, status) {
