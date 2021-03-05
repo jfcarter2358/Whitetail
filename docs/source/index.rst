@@ -7,7 +7,7 @@ Welcome to Whitetail's documentation!
 
    About.rst
    Config.rst
-   AQl.rst
+   AQL.rst
 
 .. _Address:
 
