@@ -9,14 +9,15 @@ import (
 )
 
 type IndexResponse struct {
-    Status int `json:"status"`
+    Status int      `json:"status"`
     Data   []string `json:"data"`
 }
 
 type LogResponse struct {
-    Status int `json:"status"`
+    Status int                `json:"status"`
 	Data   []LogResponseDatum `json:"data"`
-    Error  string `json:"error"`
+    Error  string             `json:"error"`
+    Length int                `json:"length"`
 }
 
 type LogResponseDatum struct {
@@ -39,7 +40,7 @@ func InitConfig(ceresHost string) {
 	CeresHost = ceresHost
 }
 
-func Query(query string) ([]LogResponseDatum, string) {
+func Query(query string) ([]LogResponseDatum, string, int) {
 	values := map[string]string{"query": query}
     json_data, err := json.Marshal(values)
 
@@ -57,7 +58,7 @@ func Query(query string) ([]LogResponseDatum, string) {
 
     json.NewDecoder(resp.Body).Decode(&data)
 
-    return data.Data, data.Error
+    return data.Data, data.Error, data.Length
 }
 
 func Index(key string) []string {

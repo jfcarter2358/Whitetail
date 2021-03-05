@@ -96,7 +96,7 @@ func Query(query string) ([]string, string){
     var logs []string
     log.Println(query)
 
-    data, errorMessage := Ceres.Query(query)
+    data, errorMessage, _ := Ceres.Query(query)
     for _, datum := range(data) {
         logs = append(logs, datum.Message)
     }
@@ -253,19 +253,8 @@ func Cleanup() {
         log.Println("Cleaning up...")
         t := time.Now()
         cutoff := t.AddDate(0, 0, -1 * Config.Config.Logging.MaxAgeDays)
-        /*
-        cutoff := t.AddDate(0, 0, -1 * Config.Config.Logging.MaxAgeDays).Format("2006-01-02T15:04:05")
-        logs := GetAllLogs()
-        cleanupCount := 0
-        for _, log := range logs {
-            if log.Timestamp < cutoff{
-                cleanupCount += 1
-                DeleteLogByID(log.ID)
-            }
-        }
-        */
-        Ceres.Query(fmt.Sprintf("DELETEBY (((((year <= %d AND month <= %d) AND day <= %d) AND hour <= %d) AND minute <= %d) AND second <= %d)", cutoff.Year(), int(cutoff.Month()), cutoff.Day(), cutoff.Hour(), cutoff.Minute(), cutoff.Second()))
-        // log.Println("Cleaned up " + strconv.Itoa(cleanupCount) + " logs")
-        log.Println("Cleaned up logs")
+
+        _, _, length := Ceres.Query(fmt.Sprintf("DELETEBY (((((year <= %d AND month <= %d) AND day <= %d) AND hour <= %d) AND minute <= %d) AND second <= %d)", cutoff.Year(), int(cutoff.Month()), cutoff.Day(), cutoff.Hour(), cutoff.Minute(), cutoff.Second()))
+        log.Println(fmt.Sprintf("Cleaned up %d logs", length))
     }
 }

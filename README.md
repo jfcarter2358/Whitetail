@@ -29,7 +29,8 @@
 - [x] Optimize AST query
 - [x] Remove UUIDs from indices on delete
 - [x] Move backend database to use Ceres
-- [ ] Online documentation
+- [x] Online documentation
+- [ ] Update manifests
 - Release 1.0
 - [ ] Add content to home page
 - [ ] Add analytics page

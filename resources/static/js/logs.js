@@ -66,8 +66,10 @@ function changeService(basePath, service) {
             dataType:"json",
             success: function(data, status) {
                 logOut = ''
-                for (var i = 0; i < data['logs'].length; i++) {
-                    logOut += data['logs'][i] + "<br>"
+                if (data['logs'] != null) {
+                    for (var i = 0; i < data['logs'].length; i++) {
+                        logOut += data['logs'][i] + "<br>"
+                    }
                 }
                 $("#logs").html(logOut)
                 document.getElementById("loader").style.display = "none";
@@ -98,8 +100,10 @@ function refreshLogs(basePath) {
                 dataType:"json",
                 success: function(data, status) {
                     logOut = ''
-                    for (var i = 0; i < data['logs'].length; i++) {
-                        logOut += data['logs'][i] + "<br>"
+                    if (data['logs'] != null) {
+                        for (var i = 0; i < data['logs'].length; i++) {
+                            logOut += data['logs'][i] + "<br>"
+                        }
                     }
                     $("#logs").html(logOut)
                     document.getElementById("loader").style.display = "none";

@@ -21,42 +21,47 @@
 
 </head>
 <body class="whitetail-white">
-{{ template "common.sidebar.html" . }}
-<div id="main" style="margin-left:15%;">
-{{ template "common.menu.html" . }}
-<br>
-<div id="loader"></div>
-<div id="contents" class="w3-container">
-	<div class="w3-container w3-card branding-primary w3-padding">
-		<div class="w3-row-padding">
-			<div class="w3-col s1 w3-cell-bottom">
-				<label style="display:inline-block;padding-top: 6px;">Query String:</label>
+	{{ template "common.sidebar.html" . }}
+	<div id="main" style="margin-left:15%;">
+		{{ template "common.menu.html" . }}
+		<br>
+		<div id="loader"></div>
+		<div id="contents" class="w3-container">
+			<div class="w3-container w3-card branding-primary w3-padding">
+				<div class="w3-row-padding">
+					<div class="w3-col s2 w3-cell-bottom">
+						<label style="display:inline-block;padding-top: 6px;">Query String:</label>
+					</div>
+					<div class="w3-col s8">
+						<input class="w3-input" type="text" id="query">
+					</div>
+					<div class="w3-col s2">
+						<button class="w3-button branding-secondary branding-hover-tertiary w3-right" onclick="query('{{ .basePath }}')" style="width:100%;">Execute Query</button>
+					</div>
+				</div>
 			</div>
-			<div class="w3-col s9">
-				<input class="w3-input" type="text" id="query">
+			<br>
+			<div id="error_message" style="display:none;">
+				<div class="w3-card whitetail-white">
+					<header class="w3-red w3-container">
+						ERROR
+					</header>
+					<br>
+					<div id="error" class="w3-container"></div>
+					<br>
+					<footer class="w3-light-grey w3-container">
+						See the <a href="https://whitetail.readthedocs.io/en/main/AQL.html">documentation</a> for more information
+					</footer>
+				</div>
 			</div>
-			<div class="w3-col s2">
-				<button class="w3-button branding-secondary branding-hover-tertiary w3-right" onclick="query('{{ .basePath }}')" style="width:100%;">Execute Query</button>
+			<div class="w3-card branding-primary w3-container" id="logs">
 			</div>
+			<br>
+		</div>
+		<div class="branding-primary" style="position:absolute;bottom:0;width:100%;text-align:center;padding:8px;">
+			For more information on the Antler Query Language, see the documentation <a href="https://whitetail.readthedocs.io/en/main/AQL.html">here</a>
 		</div>
 	</div>
-	<br>
-	<div class="w3-card whitetail-white" id="error_message" style="display:none;">
-		<header class="w3-red w3-container">
-			ERROR
-		</header>
-		<br>
-		<div id="error" class="w3-container"></div>
-		<br>
-		<footer class="w3-light-grey w3-container">
-			See the <a href="http://whitetail.readthedocs.io">documentation</a> for more information
-		</footer>
-	</div>
-	<div class="w3-card branding-primary w3-container" id="logs">
-	</div>
-	<br>
-</div>
-</div>
 
 <!--Embed the footer.html template at this location-->
 {{ template "common.footer.html" .}}
