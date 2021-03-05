@@ -8,20 +8,10 @@ import (
     "strings"
     "bytes"
     "time"
-    // "gorm.io/gorm"
-    // "gorm.io/driver/sqlite"
-    // "gorm.io/driver/postgres"
     "log"
-    // "net/url"
-    // "errors"
-    // "github.com/google/uuid"
     "strconv"
-    // "whitetail/index"
-    // "sort"
     "whitetail/config"
-    // "gorm.io/gorm/logger"
     "whitetail/ceres"
-    // "github.com/expectedsh/go-sonic/sonic"
 )
 
 type LogMessageInput struct {
@@ -60,10 +50,14 @@ type LogRequestInput struct {
     LogLevels   []string `json:"log-levels"`
 }
 
-// var DB *gorm.DB
 var Services []string
-// var ingester sonic.Ingestable
-// var search sonic.Searchable
+
+func InitLogger() {
+    data := Ceres.Index("service")
+    for _, datum := range(data) {
+        Services = append(Services, datum)
+    }
+}
 
 func formatLogMessage(data *LogMessageInput) string{
     // log line format is
@@ -93,209 +87,27 @@ func formatLogMessage(data *LogMessageInput) string{
     }
     message = message + data.Message
     if data.StackTrace != "" {
-        message += strings.ReplaceAll(strings.ReplaceAll(data.StackTrace, "\t", "&emsp;&emsp;&emsp;"), "\n", "<br>")
+        message += "<br>" + strings.ReplaceAll(strings.ReplaceAll(data.StackTrace, "\t", "&emsp;&emsp;&emsp;"), "\n", "<br>")
     }
     return message
 }
 
-/* -- Database interactions -- */
-/*
-func ConnectDataBase(db_type string, postgresConfig *Config.PostgresConfigObject, sqliteConfig *Config.SqliteConfigObject) {
-    var err error
-    var database *gorm.DB
-
-    if db_type == "postgres" {
-        dsn := url.URL{
-            User:     url.UserPassword(postgresConfig.Username, postgresConfig.Password),
-            Scheme:   db_type,
-            Host:     fmt.Sprintf("%s:%d", postgresConfig.Host, postgresConfig.Port),
-            Path:     postgresConfig.Database,
-            RawQuery: (&url.Values{"sslmode": []string{"disable"}}).Encode(),
-        }
-    	database, err = gorm.Open(postgres.Open(dsn.String()), &gorm.Config{
-            Logger: logger.Default.LogMode(logger.Silent),
-        })
-    } else if db_type == "sqlite" {
-        database, err = gorm.Open(sqlite.Open(sqliteConfig.Path), &gorm.Config{
-            Logger: logger.Default.LogMode(logger.Silent),
-        })
-    }
-
-	if err != nil {
-		log.Println(err)
-		panic("Failed to connect to database!")
-	}
-
-    database.AutoMigrate(&Log{})
-
-    DB = database
-
-    allLogs := GetAllLogs()
-
-    for _, log := range allLogs {
-        contained := false
-        for _, service := range Services {
-            if service == log.Service {
-                contained = true
-                break
-            }
-        }
-        if contained == false {
-            Services = append(Services, log.Service)
-        }
-    }
-}
-*/
-
-/*
-func GetLogCount() int {
-	logs := GetAllLogs()
-	return len(logs)
-}
-
-func GetAllLogs() []Log {
-	var logs []Log
-	DB.Find(&logs)
-	
-	return logs
-}
-*/
-
-/*
-func GetLogsFromIndex(keyString, service string, limit int, logLevels []string) []Log {
-    keys := strings.Split(keyString, ",")
-    logs := []Log{}
-    for _, key := range keys {
-        index, err := Index.GetIndexByKey(key) 
-        if err != nil {
-            continue
-        } else {
-            ids := strings.Split(index.IDs, ",")
-            for _, id := range ids {
-                newLog := &Log{}
-                if service != "" {
-                    newLog, err = GetLogByServiceAndID(id, service)
-                } else {
-                    newLog, err = GetLogByID(id)
-                }
-                if err != nil {
-                    continue
-                }
-                logs = append(logs, *newLog)
-            }
-        }
-    }
-    sort.Slice(logs[:], func(i, j int) bool {
-        return logs[i].Timestamp < logs[j].Timestamp
-    })
-    filteredLogs := []Log{}
-    for _, log := range logs {
-        levelMatch := false
-        for _, level := range logLevels {
-            if log.Level == level {
-                levelMatch = true
-                break
-            }
-        }
-        if levelMatch == true {
-            filteredLogs = append(filteredLogs, log)
-        }
-    }
-    if limit < len(filteredLogs) {
-        return filteredLogs[len(filteredLogs) - limit:]
-    }
-    return filteredLogs
-}
-*/
-
-/*
-func DeleteLogByID(id string) error{
-	log, err := GetLogByID(id)
-	if err != nil {
-		return errors.New("Log not found")
-	}
-	DB.Delete(&log)
-    Index.DeleteElementFromIndices(id)
-	return nil
-}
-
-func GetLogByID(id string) (*Log, error) {
-	var log Log
-
-	if err := DB.Where("id = ?", id).First(&log).Error; err != nil {
-		return nil, errors.New("Log not found")
-	}
-	return &log, nil
-}
-
-func GetLogsByService(keyString, service string, limit int, logLevels []string) []Log {
-    var logs []Log
-    
-    if keyString != "" {
-        logs = GetLogsFromIndex(keyString, service, limit, logLevels)
-    } else {
-        DB.Where("service = ?", service).Find(&logs)
-
-        sort.Slice(logs[:], func(i, j int) bool {
-            return logs[i].Timestamp < logs[j].Timestamp
-        })
-        filteredLogs := []Log{}
-        for _, log := range logs {
-            levelMatch := false
-            for _, level := range logLevels {
-                if log.Level == level {
-                    levelMatch = true
-                    break
-                }
-            }
-            if levelMatch == true {
-                filteredLogs = append(filteredLogs, log)
-            }
-        }
-        if limit < len(filteredLogs) {
-            return filteredLogs[len(filteredLogs) - limit:]
-        }
-        return filteredLogs
-    }
-    return logs
-}
-
-func GetLogByServiceAndID(id, service string) (*Log, error) {
-	var log Log
-
-	if err := DB.Where("id = ? AND service = ?", id, service).First(&log).Error; err != nil {
-		return nil, errors.New("Log not found")
-	}
-	return &log, nil
-}
-*/
-
-func Query(query string) []string{
+func Query(query string) ([]string, string){
     var logs []string
     log.Println(query)
 
-    data := Ceres.Query(query)
+    data, errorMessage := Ceres.Query(query)
     for _, datum := range(data) {
         logs = append(logs, datum.Message)
     }
 
-    // DB.Where(query).Find(&logs)
-    // DB.Where("service = ?", "foobar").Find(&logs)
-    log.Println(len(logs))
-    return logs
+    return logs, errorMessage
 }
 
 func CreateNewLog(text, level, timestamp, service, rawMessage string) (*Log, error) {
-	// id := uuid.New().String()
 
     layout := "2006-01-02T15:04:05"
 	t, _ := time.Parse(layout, timestamp)
-
-	// log := Log{Text: text, Level: level, Timestamp: timestamp, Service: service, ID: id, Year: t.Year(), Month: int(t.Month()), Day: t.Day(), Hour: t.Hour(), Minute: t.Minute(), Second: t.Second()}
-
-    // DB.Create(&log)
-    
-    // Index.ParseLog(rawMessage, id, timestamp, level, service)
 
     log := make(map[string]interface{})
     log["message"] = text
@@ -311,7 +123,6 @@ func CreateNewLog(text, level, timestamp, service, rawMessage string) (*Log, err
 
     Ceres.Insert([]map[string]interface{}{log})
 
-	// return &log, nil
     return nil, nil
 }
 /* -- TCP and UDP -- */

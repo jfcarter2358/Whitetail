@@ -16,8 +16,8 @@ func initializeRoutes(basePath string) {
 
 	apiRoutes := router.Group(basePath + "/api")
 	{
-		// apiRoutes.POST("/logs/service/:service", API.GetLogsByService)
 		apiRoutes.POST("/logs/query", API.QueryLogs)
+		apiRoutes.GET("/indices/services", API.GetServices)
 		apiRoutes.POST("/settings/colors/update", API.UpdateColors)
 		apiRoutes.POST("/settings/logo/update", API.UpdateLogo)
 		apiRoutes.POST("/settings/icon/update", API.UpdateIcon)

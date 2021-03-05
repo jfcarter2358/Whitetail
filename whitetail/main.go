@@ -29,6 +29,9 @@ func main() {
 	Ceres.InitConfig(Config.Config.Database.URL)
 	basePath := Config.Config.BasePath
 	log.Print("Running with base path: " + basePath)
+	log.Print("Running with port: " + strconv.Itoa(Config.Config.HTTPPort))
+
+	Logging.InitLogger()
 
 	go Logging.StartTCPServer(Config.Config.TCPPort)
 	go Logging.StartUDPServer(Config.Config.UDPPort)

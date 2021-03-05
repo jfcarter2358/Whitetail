@@ -11,30 +11,30 @@
 - [x] Add a log refresh button on the logs page
 - [x] Add filtered by log level
 - [x] Add log age cleanup
-- [ ] Add content to home page
-- [ ] Add analytics page
 - [x] Add configurable branding
 - [x] Add 'Reset to Default' buittons in settings page
 - [x] Add configuration section to README
 - [x] Make `PostgreSQL` database name configurable
 - [x] Add spinner for query
-- [ ] Make list of services repopulate on click
-- [ ] Make level list unaccessable unless service is selected
+- [x] Make list of services repopulate on click
 - [x] Break logs and query out into separate pages
 - [x] Improve logs page performance
 - [x] Add logger name tooltip
-- [ ] Add query page AQL help box
-- [ ] Add Log backup capabilities/config option
-- [ ] Add Log backup to S3 capabilities/config option
+- [x] Add query page AQL error box
 - [x] Add `${time unit} > ${value}` indices
 - [x] Add `${time unit} >= ${value}` indices
 - [x] Add `${time unit} <$ {value}` indices
 - [x] Add `${time unit} <= ${value}` indices
-- [ ] Make `[enter]` on query screen execute query
+- [x] Make `[enter]` on query screen execute query
 - [x] Optimize AST query
 - [x] Remove UUIDs from indices on delete
-- [ ] Move backend serach to use Sonic
+- [x] Move backend database to use Ceres
+- [ ] Online documentation
 - Release 1.0
+- [ ] Add content to home page
+- [ ] Add analytics page
+- [ ] Add Log backup capabilities/config option
+- [ ] Add Log backup to S3 capabilities/config option
 - [ ] Any other tasks I'll inevitably think of later
 
 ## Antler Query Language (AQL)

@@ -8,9 +8,15 @@ import (
     "net/http"
 )
 
+type IndexResponse struct {
+    Status int `json:"status"`
+    Data   []string `json:"data"`
+}
+
 type LogResponse struct {
     Status int `json:"status"`
 	Data   []LogResponseDatum `json:"data"`
+    Error  string `json:"error"`
 }
 
 type LogResponseDatum struct {
@@ -33,7 +39,7 @@ func InitConfig(ceresHost string) {
 	CeresHost = ceresHost
 }
 
-func Query(query string) []LogResponseDatum {
+func Query(query string) ([]LogResponseDatum, string) {
 	values := map[string]string{"query": query}
     json_data, err := json.Marshal(values)
 
@@ -48,6 +54,27 @@ func Query(query string) []LogResponseDatum {
     }
 
     var data LogResponse
+
+    json.NewDecoder(resp.Body).Decode(&data)
+
+    return data.Data, data.Error
+}
+
+func Index(key string) []string {
+	values := map[string]string{"key": key}
+    json_data, err := json.Marshal(values)
+
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    resp, err := http.Post(CeresHost + "/index", "application/json", bytes.NewBuffer(json_data))
+
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    var data IndexResponse
 
     json.NewDecoder(resp.Body).Decode(&data)
 

@@ -25,6 +25,10 @@ type QueryInput struct {
 	Query string `json:"query"`
 }
 
+func GetServices(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"services": Logging.Services})
+}
+
 func QueryLogs(c *gin.Context) {
 	var input QueryInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -34,48 +38,10 @@ func QueryLogs(c *gin.Context) {
 		return
 	}
 
-	/*
-	db := AST.Parse(input.Query)
-	logMessages := []string{}
-	var logs []Logging.Log
-	db.Select("text").Find(&logs)
+	logMessages, errorMessage := Logging.Query(input.Query)
 
-	for _, log := range(logs) {
-		logMessages = append(logMessages, log.Text)
-	}
-	*/
-	logMessages := Logging.Query(input.Query)
-
-	c.JSON(http.StatusOK, gin.H{"logs": logMessages})
+	c.JSON(http.StatusOK, gin.H{"logs": logMessages, "error": errorMessage})
 }
-
-/*
-func GetLogsByService(c *gin.Context) {
-	service := c.Param("service")
-	var input Logging.LogRequestInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		log.Println("Unable to bind JSON")
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	logs := []Logging.Log{}
-	lineLimit, err := strconv.Atoi(input.LineLimit)
-	
-	if err == nil {
-		logs = Logging.GetLogsByService(input.KeywordList, service, lineLimit, input.LogLevels)
-	} else {
-		logs = Logging.GetLogsByService(input.KeywordList, service, 1000, input.LogLevels)
-	}
-
-	logMessages := []string{}
-	for _, log := range logs {
-		logMessages = append(logMessages, log.Text)
-	}
-
-	c.JSON(http.StatusOK, gin.H{"logs": logMessages})
-}
-*/
 
 func UpdateLogo(c *gin.Context) {
 	file, err := c.FormFile("file")

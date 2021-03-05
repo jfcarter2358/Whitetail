@@ -8,11 +8,20 @@ function query(basePath) {
         contentType:"application/json;",
         dataType:"json",
         success: function(data, status) {
-            logOut = ''
-            for (var i = 0; i < data['logs'].length; i++) {
-                logOut += data['logs'][i] + "<br>"
+            console.log(data)
+            if (data['error'] != "") {
+                document.getElementById("error_message").style.display = "block";
+                $("#error").html(data['error'])
+            } else {
+                document.getElementById("error_message").style.display = "none";
+                logOut = ''
+                if (data['logs'] != null) {
+                    for (var i = 0; i < data['logs'].length; i++) {
+                        logOut += data['logs'][i] + "<br>"
+                    }
+                }
+                $("#logs").html(logOut)
             }
-            $("#logs").html(logOut)
             document.getElementById("loader").style.display = "none";
         },
         error: function(data, status) {

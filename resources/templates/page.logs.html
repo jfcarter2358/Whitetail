@@ -8,11 +8,13 @@
 
 <script>
 window.setInterval(function() {
-	if ($("#live_view").is(':checked')) {
+	if ($("#live_view").hasClass('play')) {
 		refreshLogs("{{ .basePath }}")
 	}
 }, 1000);
 </script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
 </head>
 <body class="whitetail-white">
 {{ template "common.sidebar.html" . }}
@@ -24,31 +26,28 @@ window.setInterval(function() {
 	<div class="w3-container w3-card branding-primary w3-padding">
 		<div class="w3-row-padding">
 			<div class="w3-col s1">
-				<input class="w3-check" id="live_view" type="checkbox">
-				<label>Live View</label>
+				<i id="live_view" class="fas fa-pause play" onclick="togglePausePlay();" style="vertical-align:center;padding-top:12px;"></i>
 			</div>
-			<div class="w3-col s1 w3-cell-middle">
-				<label class="w3-cell-bottom">Line Limit</label>
-			</div>
-			<div class="w3-col s2 w3-cell-middle">
-				<input id="line_limit" type="text" value=100>
+			<div class="w3-col s2 w3-left-align" style="padding-top: 6px;">
+				<p style="display: inline">Line Limit: </p>
+				<input id="line_limit" type="text" value=100 style="display: inline; width:40%;">
 			</div>
 			<div class="w3-col s3">
 				<div class="w3-dropdown-click w3-right" style="width:100%;">
-					<button id="level_button" onclick="toggleDropdown('level_dropdown')" class="w3-button branding-secondary branding-hover-tertiary" style="width:100%;">Filter by Log Level</button>
-					<div id="level_dropdown" class="w3-dropdown-content w3-bar-block w3-border">
-						<button id="INFO" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'INFO')">INFO</button>
-						<button id="DEBUG" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'DEBUG')">DEBUG</button>
-						<button id="WARN" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'WARN')">WARN</button>
-						<button id="TRACE" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'TRACE')">TRACE</button>
-						<button id="ERROR" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'ERROR')">ERROR</button>
+					<button id="level_button" onclick="toggleDropdown('level_dropdown')" class="w3-button branding-secondary branding-hover-tertiary w3-left-align" style="width:100%;">Log Level Filter<i class="fas fa-caret-down" style="position: absolute; right: 10px;top: 12px;"></i></button>
+					<div id="level_dropdown" class="w3-dropdown-content w3-bar-block w3-border" style="width: 100%;">
+						<button id="INFO" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'INFO')"><i class="far fa-check-square" id="INFO_check"></i>&nbsp;INFO</button>
+						<button id="DEBUG" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'DEBUG')"><i class="far fa-check-square" id="DEBUG_check"></i>&nbsp;DEBUG</button>
+						<button id="WARN" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'WARN')"><i class="far fa-check-square" id="WARN_check"></i>&nbsp;WARN</button>
+						<button id="TRACE" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'TRACE')"><i class="far fa-check-square" id="TRACE_check"></i>&nbsp;TRACE</button>
+						<button id="ERROR" class="w3-bar-item w3-button branding-secondary branding-hover-primary" onclick="filterLevel('{{ $.basePath }}', 'ERROR')"><i class="far fa-check-square" id="ERROR_check"></i>&nbsp;ERROR</button>
 					</div>
 				</div>
 			</div>
 			<div class="w3-col s3">
 				<div class="w3-dropdown-click w3-right" style="width:100%;">
-					<button id="services_button" onclick="toggleDropdown('services_dropdown')" class="w3-button branding-secondary branding-hover-tertiary" style="width:100%;">Select a Service</button>
-					<div id="services_dropdown" class="w3-dropdown-content w3-bar-block w3-border">
+					<button id="services_button" onclick="updateServices('{{ $.basePath }}')" class="w3-button branding-secondary branding-hover-tertiary w3-left-align" style="width:100%;">Service Filter<i class="fas fa-caret-down" style="position: absolute; right: 10px;top: 12px;"></i></button>
+					<div id="services_dropdown" class="w3-dropdown-content w3-bar-block w3-border" style="width: 100%;">
 					{{ range $elem_val := $.services }}
 						<button class="w3-bar-item w3-button branding-hover-primary" onclick="changeService('{{ $.basePath }}', '{{ $elem_val }}')">{{ $elem_val }}</button>
 					{{ end }}
@@ -56,7 +55,7 @@ window.setInterval(function() {
 				</div>
 			</div>
 			<div class="w3-col s2">
-				<button class="w3-button branding-secondary branding-hover-tertiary w3-right" onclick="refreshLogs('{{ .basePath }}')" style="width:100%;">Refresh Logs</button>
+				<button class="w3-button branding-secondary branding-hover-tertiary w3-right w3-left-align" onclick="refreshLogs('{{ .basePath }}')" style="width:100%;">Refresh Logs</button>
 			</div>
 		</div>
 	</div>

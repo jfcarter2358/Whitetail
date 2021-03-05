@@ -9,10 +9,25 @@ function formatQuery(service, limit) {
         for (var i = 1; i < levelList.length; i++) {
             infoList = infoList + "," + levelList[i]
         }
-        return `SELECTBY (((service = ${service} AND level IN ${infoList}) ORDERBY timestamp) LIMIT ${limit})`
+        console.log(infoList);
+        console.log(`SELECTBY (((service = ${service} AND level IN ${infoList}) ORDERDESC timestamp) LIMIT ${limit})`);
+        return `SELECTBY (((service = ${service} AND level IN ${infoList}) ORDERDESC timestamp) LIMIT ${limit})`
     }
 }
 
+function togglePausePlay() {
+    if ($("#live_view").hasClass('play')) {
+        $("#live_view").removeClass('play');
+        $("#live_view").removeClass('fa-pause');
+        $("#live_view").addClass('pause');
+        $("#live_view").addClass('fa-play');
+    } else {
+        $("#live_view").removeClass('pause');
+        $("#live_view").removeClass('fa-play');
+        $("#live_view").addClass('play');
+        $("#live_view").addClass('fa-pause');
+    }
+}
 
 function filterLevel(basePath, level) {
     index = levelList.indexOf(level);
@@ -20,10 +35,14 @@ function filterLevel(basePath, level) {
         levelList.splice(index, 1);
         $('#' + level).removeClass("branding-secondary")
         $('#' + level).addClass("whitetail-white")
+        $('#' + level + "_check").removeClass("fa-check-square")
+        $('#' + level + "_check").addClass("fa-square")
     } else {
         levelList.push(level)
         $('#' + level).removeClass("whitetail-white")
         $('#' + level).addClass("branding-secondary")
+        $('#' + level + "_check").removeClass("fa-square")
+        $('#' + level + "_check").addClass("fa-check-square")
     }
     service = $("#services_button").text()
     lineLimit = $("#line_limit").val()
@@ -31,7 +50,7 @@ function filterLevel(basePath, level) {
 }
 
 function changeService(basePath, service) {
-    $("#services_button").text(service)
+    $("#services_button").html("Service Filter: " + service + '<i class="fas fa-caret-down" style="position: absolute; right: 10px;top: 12px;"></i>');
     toggleDropdown('services_dropdown')
     lineLimit = $("#line_limit").val()
     queryString = formatQuery(service, lineLimit)
@@ -63,9 +82,11 @@ function changeService(basePath, service) {
 
 function refreshLogs(basePath) {
     service = $("#services_button").text()
-    if (service != "Select a Service") {
+    if (service != "Service Filter") {
         lineLimit = $("#line_limit").val()
-        queryString = formatQuery(service, lineLimit)
+        realService = service.split(": ");
+        console.log(realService)
+        queryString = formatQuery(realService[1], lineLimit)
         if (queryString == "" ) {
             $("#logs").html("")
         } else {
@@ -90,4 +111,26 @@ function refreshLogs(basePath) {
             });
         }
     }
+}
+
+function updateServices(basePath) {
+    $.ajax({
+        type: "GET",
+        url: basePath + "/api/indices/services",
+        contentType:"application/json;",
+        dataType:"json",
+        success: function(data, status) {
+            console.log(data)
+            $("#services_dropdown").empty();
+            data['services'].sort();
+            for(var i = 0; i < data['services'].length; i++) {
+                $("#services_dropdown").append("<button class=\"w3-bar-item w3-button branding-hover-primary\" onclick=\"changeService('" + basePath + "', '" + data['services'][i] + "')\">" + data['services'][i] + "</button>")
+            }
+        },
+        error: function(data, status) {
+            console.log(data)
+        },
+        async: false
+    });
+    toggleDropdown('services_dropdown')
 }

@@ -5,6 +5,19 @@
 <!-- i.e. loading a page specific js file or stylesheet -->
 <script src="{{ .basePath }}/resources/js/query.js"></script>
 <link rel="stylesheet" type="text/css" href="{{ .basePath }}/resources/css/loader.css">
+<script>
+	$(document).ready(
+		function() {
+			$('#query').keypress(
+				function(e) {
+					if (e.keyCode==13) {
+						query('{{ .basePath }}');
+					}
+				}
+			);
+		}
+	);
+</script>
 
 </head>
 <body class="whitetail-white">
@@ -17,7 +30,7 @@
 	<div class="w3-container w3-card branding-primary w3-padding">
 		<div class="w3-row-padding">
 			<div class="w3-col s1 w3-cell-bottom">
-				<label style="display:inline-block;">Query String</label>
+				<label style="display:inline-block;padding-top: 6px;">Query String:</label>
 			</div>
 			<div class="w3-col s9">
 				<input class="w3-input" type="text" id="query">
@@ -28,6 +41,17 @@
 		</div>
 	</div>
 	<br>
+	<div class="w3-card whitetail-white" id="error_message" style="display:none;">
+		<header class="w3-red w3-container">
+			ERROR
+		</header>
+		<br>
+		<div id="error" class="w3-container"></div>
+		<br>
+		<footer class="w3-light-grey w3-container">
+			See the <a href="http://whitetail.readthedocs.io">documentation</a> for more information
+		</footer>
+	</div>
 	<div class="w3-card branding-primary w3-container" id="logs">
 	</div>
 	<br>
