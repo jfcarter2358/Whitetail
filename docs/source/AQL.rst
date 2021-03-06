@@ -7,13 +7,13 @@ AQL
 
 ========
 
-AQL is a simple query language designed to be used when the standrard filtering (level and service) is not sufficient.  AQL statments are written in nested blocks of binary operations. This means that each operator can only have a singular left and singular right argument. An example query which gets logs of level `INFO` and level `WARN` is as follows:
+AQL is a simple query language designed to be used when the standrard filtering (level and service) is not sufficient.  AQL statments are written in nested blocks of binary operations. This means that each operator can only have a singular left and singular right argument. In addition, data is retrieved by prepending your logic with a ``SELECTBY`` keyword or removed by prepending with a ``DELETEBY`` keyword. An example query which gets logs of level `INFO` and level `WARN` is as follows:
 
-``level = INFO OR level = WARN``
+``SELECTBY level = INFO OR level = WARN``
 
 If you want to change the 'OR' statements to include more than just the two levels, you'll wrap the first two up in parenthesis and then OR that with a third filter.
 
-``( level = INFO OR level = WARN ) OR level = DEBUG``
+``SELECTBY ( level = INFO OR level = WARN ) OR level = DEBUG``
 
 Filters
 -------

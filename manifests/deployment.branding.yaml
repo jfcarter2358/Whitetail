@@ -18,7 +18,7 @@ spec:
       name: whitetail
     spec:
       containers:
-      - image: johncarterodg/whitetail:0.7
+      - image: johncarterodg/whitetail:0.9
         imagePullPolicy: Always
         name: whitetail
         ports:
@@ -72,3 +72,6 @@ spec:
       - configMap:
           name: whitetail-icon-configmap
         name: icon-vol
+      - configMap:
+          name: ceres-config-configmap
+        name: ceres-config-vol

@@ -18,7 +18,7 @@ spec:
       name: whitetail
     spec:
       containers:
-      - image: johncarterodg/whitetail:0.7
+      - image: johncarterodg/whitetail:0.9
         imagePullPolicy: Always
         name: whitetail
         ports:

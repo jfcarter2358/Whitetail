@@ -1,7 +1,9 @@
 # Whitetail
 
-## Premise
+## About
 `Whitetail` is a lightweight alternative to ELK for non-intensive applications. It is built with containerization in mind for a non-resource intensive log viewer with basic metadata search capabilites.
+
+Data is stored in `Whitetail` through the use of a `Ceres` database.  The `Ceres` project can be found [here](https://github.com/jfcarter2358/ceres)
 
 ## TO DO
 - [x] Add settings page
@@ -31,6 +33,7 @@
 - [x] Move backend database to use Ceres
 - [x] Online documentation
 - [ ] Update manifests
+- [x] Update README
 - Release 1.0
 - [ ] Add content to home page
 - [ ] Add analytics page
@@ -40,30 +43,31 @@
 
 ## Antler Query Language (AQL)
 
-AQL is a simple query language designed to be used when the standrard filtering (level and service) is not sufficient.  AQL statments are written in nested blocks of binary operations. This means that each operator can only have a singular left and singular right argument. An example query which gets logs of level `INFO` and level `WARN` is as follows:
+AQL is a simple query language designed to be used when the standrard filtering (level and service) is not sufficient.  AQL statments are written in nested blocks of binary operations. This means that each operator can only have a singular left and singular right argument. In addition, data is retrieved by prepending your logic with a `SELECTBY` keyword or removed by prepending with a `DELETEBY` keyword. An example query which gets logs of level `INFO` and level `WARN` is as follows:
 
 ```
-@level:INFO OR @level:WARN
+SELECTBY level = INFO OR level = WARN
 ```
 
 If you want to change the 'OR' statements to include more than just the two levels, you'll wrap the first two up in parenthesis and then OR that with a third filter.
 
 ```
-( @level:INFO OR @level:WARN ) OR @level:DEBUG
+SELECTBY ( level = INFO OR level = WARN ) OR level = DEBUG
 ```
 
 ### Filters
 The various filters that can be used in AQL statements are as follows (`< text like this is a placeholder >`):
-Filter                 | Desrciption
------------------------|------------
-`level = < level >`     | Get logs with level `< level >` (`= < level >` can be replaced with `IN < csv of levels >`)
-`service = < service >` | Get logs from service `< service >` (`= < service >` can be replaced with `IN < csv of services >`)
-`year = < year >`       | Get logs wtih a timestamp that has the year `< year >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
-`month = < month >`     | Get logs wtih a timestamp that has the year `< month >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
-`day = < day >`         | Get logs wtih a timestamp that has the year `< day >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
-`hour = < hour >`       | Get logs wtih a timestamp that has the year `< hour >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
-`minute = < minute >`   | Get logs wtih a timestamp that has the year `< minute >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
-`second = < second >`   | Get logs wtih a timestamp that has the year `< second >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
+Filter                      | Desrciption
+----------------------------|------------
+`level = < level >`         | Get logs with level `< level >` (`= < level >` can be replaced with `IN < csv of levels >`)
+`service = < service >`     | Get logs from service `< service >` (`= < service >` can be replaced with `IN < csv of services >`)
+`year = < year >`           | Get logs wtih a timestamp that has the year `< year >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
+`month = < month >`         | Get logs wtih a timestamp that has the month `< month >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
+`day = < day >`             | Get logs wtih a timestamp that has the day `< day >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
+`hour = < hour >`           | Get logs wtih a timestamp that has the hour `< hour >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
+`minute = < minute >`       | Get logs wtih a timestamp that has the minute `< minute >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
+`second = < second >`       | Get logs wtih a timestamp that has the second `< second >` (`=` can be replaced with `<`, `<=`, `>=`, `>`, or `!=`)
+`timestamp = < timestamp >` | Get longs with string timestampe in format `YYYY-MM-DDThh:mm:ss`
 
 ### Operators
 The various operators are shown below with examples
@@ -82,7 +86,7 @@ The various operators are shown below with examples
 - __LIMIT__
     - Limits the results from a filter to `N` log messages
     - `< left filter > LIMIT < N >`
-- __ORDER_ASCEND__
+- __ORDERBY__
     - `< left filter > ORDER_ASCEND < field >`
     - Orders the results of the left filter in ascending order by one of the following fields
         - level
@@ -95,7 +99,7 @@ The various operators are shown below with examples
         - hour
         - minute
         - second
-- __ORDER_DESCEND__
+- __ORDERDESC__
     - `< left filter > ORDER_DESCEND < field >`
     - Orders the results of the left filter in descending order by one of the following fields
         - level
@@ -120,14 +124,13 @@ An example of a `whitetail` configuraiton file is as follows:
     "udp-port": 9003,
     "basepath": "",
     "database": {
-        "sqlite": {
-            "path": "./data/whitetail.db"
-        }
+        "url": "http://localhost:9090"
     },
     "logging": {
         "max-age-days": 2,
         "poll-rate": "1h",
-        "concise-logger": true
+        "concise-logger": true,
+        "hoverable-long-logger": false
     },
     "branding": {
         "primary_color": {
@@ -136,7 +139,7 @@ An example of a `whitetail` configuraiton file is as follows:
         },
         "secondary_color": {
             "background": "#8F7E4F",
-            "text": "#000000"
+            "text": "#ffffff"
         },
         "tertiary_color": {
             "background": "#524632",
@@ -172,52 +175,25 @@ To configure `Whitetail` to use `Sqlite`, set the `database` section to this:
 
 ```json
 {
-    "sqlite": {
-        "path": "./data/whitetail.db"
-    }
-}
-```
-`Sqlite` configuration setting information is as follows
-
-Name   | Description
--------|------------
-`path` | The local location to create the `Sqlite` db file
-
-To configure `Whitetail` to use `PostgreSQL`, set the `database` section to this:
-
-```json
-{
-    "postgres": {
-        "host": "localhost",
-        "port": 5432,
-        "username": "postgres",
-        "password": "foobar",
-        "database": "whitetail"
-    }
+    "database": {
+        "url": "http://localhost:9090"
+    },
 }
 ```
 
-As a note, the database must be created prior to `Whitetail` attempting to connect to it
 
-`PostgreSQL` configuration setting information is as follows
-
-Name       | Description
------------|------------
-`host`     | The hostname of the `PostgreSQL` instalce
-`port`     | The port that `PostgreSQL` is running on
-`username` | The username for the database
-`password` | The password for the database
-`database` | The name of the database to use
+By default the URL points to a local instsance of `Ceres`, which works for the Kubernetes deployment. You can instead point it at an external instsance via the URL if you wish.
 
 ### Logging
 
 Logging configuration mainly concerns itself with the cleanup process to remove old logs, however it does also configure some aspects of the log message formatting.
 
-Name             | Description
------------------|------------
-`max-age-days`   | How many days to keep logs for (integer)
-`poll-rate`      | How often to check for old logs. Is of the form `< number >< time unit >` where valid time units are `ns`, `us`, `ms`, `s`, `m`, `h`
-`concise-logger` | Should the logger name be compaceted for ease of viewing (bool)
+Name                    | Description
+------------------------|------------
+`max-age-days`          | How many days to keep logs for (integer)
+`poll-rate`             | How often to check for old logs. Is of the form `< number >< time unit >` where valid time units are `ns`, `us`, `ms`, `s`, `m`, `h`
+`concise-logger`        | Should the logger name be compaceted for ease of viewing (bool)
+`hoverable-long-logger` | Should the logger name be expanded when you hover over it (bool)
 
 ### Branding
 
@@ -240,7 +216,7 @@ Name                         | Description
 In addition, you can configure the logo shown in the UI by placing your own logo file at `< whitetail root >/config/custom/logo/logo.png` and you can configure the icon shown in the browser by placing your own icon file at `< whitetail root >/config/custom/icon/favicon.png`
 
 ## Container Log Persistence
-To persist your logs when running in a containerized environment you have a couple of options. You can either run `Whitetail` with an external (persisted) PostgreSQL database, or you can mount a volume at `/whitetail/data` in your container and persist that (if you are using a Sqlite database)
+To persist your logs when running in a containerized environment you have a couple of options. You can either run `Whitetail` with an external (persisted) Ceres database _or_ you can use the available PVC manifests (if you are running in Kubernetes) to backup the ceres data directory
 
 ## Contact
 `Whitetail` is written by John Carter
