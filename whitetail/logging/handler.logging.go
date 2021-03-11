@@ -254,7 +254,28 @@ func Cleanup() {
         t := time.Now()
         cutoff := t.AddDate(0, 0, -1 * Config.Config.Logging.MaxAgeDays)
 
-        _, _, length := Ceres.Query(fmt.Sprintf("DELETEBY (((((year <= %d AND month <= %d) AND day <= %d) AND hour <= %d) AND minute <= %d) AND second <= %d)", cutoff.Year(), int(cutoff.Month()), cutoff.Day(), cutoff.Hour(), cutoff.Minute(), cutoff.Second()))
+        _, errorMessage, length := Ceres.Query(fmt.Sprintf("DELETEBY (((((year <= %d AND month <= %d) AND day <= %d) AND hour <= %d) AND minute <= %d) AND second <= %d)", cutoff.Year(), int(cutoff.Month()), cutoff.Day(), cutoff.Hour(), cutoff.Minute(), cutoff.Second()))
+        log.Println(errorMessage)
         log.Println(fmt.Sprintf("Cleaned up %d logs", length))
     }
 }
+
+/*
+DELETEBY 
+(
+    (
+        (
+            (
+                (
+                    year <= %d 
+                    AND month <= %d
+                ) 
+                AND day <= %d 
+            ) 
+            AND hour <= %d 
+        ) 
+        AND minute <= %d 
+    ) 
+    AND second <= %d
+)
+*/
