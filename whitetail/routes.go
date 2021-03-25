@@ -24,6 +24,7 @@ func initializeRoutes(basePath string) {
 		apiRoutes.POST("/settings/colors/default", API.DefaultColors)
 		apiRoutes.POST("/settings/logo/default", API.DefaultLogo)
 		apiRoutes.POST("/settings/icon/default", API.DefaultIcon)
+		apiRoutes.POST("/files", API.StoreFile)
 	}
 
 	uiRoutes := router.Group(basePath + "/ui")

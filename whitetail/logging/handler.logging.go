@@ -260,22 +260,35 @@ func Cleanup() {
     }
 }
 
-/*
-DELETEBY 
-(
-    (
-        (
-            (
-                (
-                    year <= %d 
-                    AND month <= %d
-                ) 
-                AND day <= %d 
-            ) 
-            AND hour <= %d 
-        ) 
-        AND minute <= %d 
-    ) 
-    AND second <= %d
-)
-*/
+func ParseFileData(data, service string) {
+    messages := strings.Split(data, "\n")
+
+    for i := 0; i < len(messages); i++ {
+
+        messages[i] = strings.TrimSpace(messages[i])
+        messages[i] = strings.TrimSuffix(messages[i], "\n")
+
+        var input LogMessageInput = LogMessageInput{}
+
+        input.Message = messages[i]
+        input.Service = service
+        input.Level = "INFO"
+        input.LoggerName = "wt.filelogger"
+        input.Timestamp = time.Now().Format("2006-01-02T15:04:05")
+
+        formatted := formatLogMessage(&input)
+            
+        contained := false
+        for _, service := range Services {
+            if service == input.Service {
+                contained = true
+                break
+            }
+        }
+        if contained == false {
+            Services = append(Services, input.Service)
+        }
+    
+        CreateNewLog(formatted, input.Level, input.Timestamp, input.Service, input.Message)
+	}
+}

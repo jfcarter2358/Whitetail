@@ -13,6 +13,8 @@ import (
 	// "whitetail/ast"
 	"os"
 	"io"
+	"fmt"
+	"io/ioutil"
 )
 
 type AnalyticsInput struct {
@@ -193,4 +195,37 @@ func getLogs(c *gin.Context) {
 	// result := base.Add(td.Duration())
 	
     // fmt.Println(result) // "2015-02-13 00:17:56 +0000 UTC"
+}
+
+func StoreFile(c *gin.Context) {
+	// Multipart form
+	form, _ := c.MultipartForm()
+	files := form.File["file"]
+	service := c.PostForm("service")
+
+	log.Println(service)
+	log.Println("Store file")
+	log.Println(files)
+
+	for _, file := range files {
+		log.Println(file.Filename)
+		err := c.SaveUploadedFile(file, "./saved/" + file.Filename)
+		if err != nil {
+			log.Println(err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
+	data, err := ioutil.ReadFile("./saved/" + files[0].Filename)
+    if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	Logging.ParseFileData(string(data), service)
+
+	c.String(http.StatusOK, fmt.Sprintf("%d files uploaded", len(files)))
+	return
 }
