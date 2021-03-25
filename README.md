@@ -32,13 +32,14 @@ Data is stored in `Whitetail` through the use of a `Ceres` database.  The `Ceres
 - [x] Remove UUIDs from indices on delete
 - [x] Move backend database to use Ceres
 - [x] Online documentation
-- [ ] Update manifests
+- [x] Update manifests
 - [x] Update README
 - Release 1.0
 - [ ] Add content to home page
 - [ ] Add analytics page
 - [ ] Add Log backup capabilities/config option
 - [ ] Add Log backup to S3 capabilities/config option
+- [x] Add files endpoint to upload files and have them stored as logs
 - [ ] Any other tasks I'll inevitably think of later
 
 ## Antler Query Language (AQL)
