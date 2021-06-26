@@ -19,6 +19,7 @@ type ConfigObject struct {
 	Database DatabaseConfigObject `json:"database" binding:"required"`
 	Logging  LoggingConfigObject  `json:"logging" binding:"required"`
 	Branding BrandingConfigObject `json:"branding" binding:"required"`
+	PrintElevatedMessages bool    `json:"print-elevated-messages" binding:"required"`
 }
 
 type DatabaseConfigObject struct {
