@@ -30,5 +30,6 @@
         "DEBUG_color": "#2B50AA",
         "TRACE_color": "#610345",
         "ERROR_color": "#95190C"
-    }
+    },
+    "print-elevated-messages": true
 }

@@ -123,6 +123,14 @@ func CreateNewLog(text, level, timestamp, service, rawMessage string) (*Log, err
 
     Ceres.Insert([]map[string]interface{}{log})
 
+    if Config.Config.PrintElevatedMessages {
+        if (level == "INFO") || (level == "DEBUG") || (level == "TRACE") {
+            // ignore these log levels
+        } else {
+            fmt.Printf(">>> %v %v %v\n", service , level, rawMessage)
+        }
+    }
+
     return nil, nil
 }
 /* -- TCP and UDP -- */
@@ -235,7 +243,9 @@ func handleTCPRequest(conn net.Conn) {
     // Send a response back to person contacting us.
     conn.Write([]byte("Message received."))
     // Close the connection when you're done with it.
-    conn.Close()
+    defer conn.Close()
+
+    return
 }
 
 func Cleanup() {
