@@ -24,6 +24,7 @@ build-linux:
 	mv whitetail/whitetail dist/whitetail
 	cp -r resources/* dist
 	mkdir dist/data
+	mkdir dist/saved
 	mkdir -p dist/config/custom/logo ||true
 	mkdir -p dist/config/custom/icon ||true
 
