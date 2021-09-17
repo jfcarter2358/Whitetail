@@ -30,7 +30,8 @@ data:
         "DEBUG_color": "#2b50aa",
         "TRACE_color": "#610345",
         "ERROR_color": "#95190c"
-      }
+      },
+      "print-elevated-messages": true
     }
 kind: ConfigMap
 metadata:

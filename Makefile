@@ -19,7 +19,7 @@ build-linux:
 	# brew install FiloSottile/musl-cross/musl-cross
 	rm -rf dist || true
 	mkdir dist
-	cd whitetail; env CC=x86_64-linux-musl-gcc CXX=x86_64-linux-musl-g++ GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -ldflags "-linkmode external -extldflags -static" -v -o whitetail
+	cd whitetail; env GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -ldflags "-linkmode external -extldflags -static" -v -o whitetail
 	mv whitetail/whitetail dist/whitetail
 	cp -r resources/* dist
 	mkdir dist/data

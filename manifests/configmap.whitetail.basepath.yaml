@@ -25,7 +25,8 @@ data:
           "background": "#524632",
           "text": "#ffffff"
         }
-      }
+      },
+      "print-elevated-messages": true
     }
 kind: ConfigMap
 metadata:
