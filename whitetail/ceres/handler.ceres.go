@@ -45,13 +45,15 @@ func Query(query string) ([]LogResponseDatum, string, int) {
     json_data, err := json.Marshal(values)
 
     if err != nil {
-        log.Fatal(err)
+        log.Println(err)
+        return []LogResponseDatum{}, "", 0
     }
 
     resp, err := http.Post(CeresHost + "/query", "application/json", bytes.NewBuffer(json_data))
 
     if err != nil {
-        log.Fatal(err)
+        log.Println(err)
+        return []LogResponseDatum{}, "", 0
     }
 
     var data LogResponse
@@ -66,13 +68,15 @@ func Index(key string) []string {
     json_data, err := json.Marshal(values)
 
     if err != nil {
-        log.Fatal(err)
+        log.Println(err)
+        return []string{}
     }
 
     resp, err := http.Post(CeresHost + "/index", "application/json", bytes.NewBuffer(json_data))
 
     if err != nil {
-        log.Fatal(err)
+        log.Println(err)
+        return []string{}
     }
 
     var data IndexResponse
@@ -88,18 +92,14 @@ func Insert(data []map[string]interface{}) {
     json_data, err := json.Marshal(values)
 
     if err != nil {
-        log.Fatal(err)
+        log.Println(err)
+        return
     }
 
     _, err = http.Post(CeresHost + "/insert", "application/json", bytes.NewBuffer(json_data))
 
     if err != nil {
-        log.Fatal(err)
+        log.Println(err)
+        return
     }
-
-    // var res map[string]interface{}
-
-    // json.NewDecoder(resp.Body).Decode(&res)
-
-    // return res["data"]
 }

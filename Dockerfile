@@ -3,6 +3,7 @@ FROM ubuntu:18.04
 RUN apt-get update
 RUN mkdir /whitetail
 RUN mkdir /whitetail/data
+RUN mkdir /whitetail/saved
 RUN mkdir -p /whitetail/config/custom/icon
 RUN mkdir -p /whitetail/config/custom/logo
 
