@@ -44,7 +44,6 @@
 
 </head>
 <body class="whitetail-white">
-	<div hidden id="db_name">{{ .db_name }}</div>
 	<div class="w3-sidebar w3-bar-block w3-card w3-white w3-border w3-border-grey" id="sidebar" style="width:15%;display:block">
 	    <div class="w3-bar-item w3-large branding-primary" style="cursor:default;">
 	        <img src="{{ .basePath }}/resources/img/logo.png" width="100%;">
@@ -86,7 +85,7 @@
 			<div class="w3-container w3-card branding-primary w3-padding">
 				<div class="w3-row-padding">
 					<div class="w3-col s2 w3-cell-bottom">
-						<label style="display:inline-block;padding-top: 6px;">Query String (use '${db}' for database name):</label>
+						<label style="display:inline-block;padding-top: 6px;">Query String:</label>
 					</div>
 					<div class="w3-col s8">
 						<input class="w3-input" type="text" id="query">
@@ -115,7 +114,7 @@
 			<br>
 		</div>
 		<div class="branding-primary w3-left-align" style="position:absolute;bottom:0;width:100%;padding-top:8px;padding:8px;padding-bottom:9px;">
-			For more information on the Antler Query Language, see the documentation <a href="https://ceresdb.readthedocs.io/en/latest/querying.html">here</a>
+			For more information on the Antler Query Language, see the documentation <a href="https://whitetail.readthedocs.io/en/main/AQL.html">here</a>
 		</div>
 	</div>
 

@@ -4,13 +4,17 @@ package main
 
 import (
 	// "os"
-	"github.com/gin-gonic/gin"
 	"log"
-	"whitetail/logging"
+	"whitetail/ceresdb"
 	"whitetail/config"
+	"whitetail/logging"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jfcarter2358/ceresdb-go/connection"
+
 	// "whitetail/index"
 	// "whitetail/ast"
-	"whitetail/ceres"
+
 	"strconv"
 )
 
@@ -20,21 +24,30 @@ func main() {
 	// Set Gin to production mode
 	gin.SetMode(gin.ReleaseMode)
 
-	Config.ReadConfigFile()
-	routerPort := ":" + strconv.Itoa(Config.Config.HTTPPort)
+	config.ReadConfigFile()
+	routerPort := ":" + strconv.Itoa(config.Config.HTTPPort)
 
 	// Read in the compass data from the json file
 	// Logging.ConnectDataBase(Config.Config.Database.Type, Config.Config.Database.Postgres, Config.Config.Database.Sqlite)
 	// Index.ConnectDataBase(Config.Config.Database.Type, Config.Config.Database.Postgres, Config.Config.Database.Sqlite)
-	Ceres.InitConfig(Config.Config.Database.URL)
-	basePath := Config.Config.BasePath
+
+	connection.Initialize(config.Config.DB.Username, config.Config.DB.Password, config.Config.DB.Host, config.Config.DB.Port)
+
+	if err := ceresdb.VerifyDatabase(config.Config.DB.Name); err != nil {
+		panic(err)
+	}
+	if err := ceresdb.VerifyCollections(config.Config.DB.Name); err != nil {
+		panic(err)
+	}
+
+	basePath := config.Config.BasePath
 	log.Print("Running with base path: " + basePath)
-	log.Print("Running with port: " + strconv.Itoa(Config.Config.HTTPPort))
+	log.Print("Running with port: " + strconv.Itoa(config.Config.HTTPPort))
 
-	Logging.InitLogger()
+	logging.InitLogger()
 
-	go Logging.StartTCPServer(Config.Config.TCPPort)
-	go Logging.StartUDPServer(Config.Config.UDPPort)
+	go logging.StartTCPServer(config.Config.TCPPort)
+	go logging.StartUDPServer(config.Config.UDPPort)
 
 	// Set the router as the default one provided by Gin
 	router = gin.Default()
@@ -47,7 +60,7 @@ func main() {
 	initializeRoutes(basePath)
 
 	// Kick off the log cleanup check
-	go Logging.Cleanup()
+	go logging.Cleanup()
 
 	// Start serving the application
 	router.Run(routerPort)

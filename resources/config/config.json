@@ -4,7 +4,11 @@
     "udp-port": 9003,
     "basepath": "",
     "database": {
-        "url": "http://localhost:9090"
+        "username": "ceresdb",
+        "password": "ceresdb",
+        "host": "ceresdb",
+        "port": 7437,
+        "name": "whitetail"
     },
     "logging": {
         "max-age-days": 2,
@@ -31,5 +35,5 @@
         "TRACE_color": "#610345",
         "ERROR_color": "#95190C"
     },
-    "print-elevated-messages": true
+    "print-elevated-messages": false 
 }

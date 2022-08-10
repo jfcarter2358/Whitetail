@@ -4,58 +4,61 @@ package Page
 
 import (
 	// "log"
-	"github.com/gin-gonic/gin"
 	"net/http"
-	"whitetail/logging"
 	"whitetail/config"
+	"whitetail/logging"
+
+	"github.com/gin-gonic/gin"
 )
 
 func RedirectIndexPage(c *gin.Context) {
-	c.Redirect(301, Config.Config.BasePath + "/ui/home")
+	c.Redirect(301, config.Config.BasePath+"/ui/home")
 }
 
 func ShowHomePage(c *gin.Context) {
 	// Render the logs-selection.html page
 	render(c, gin.H{
-		"title":   "Home",
-		"basePath": Config.Config.BasePath,
-		"location": "Home"}, 
+		"title":    "Home",
+		"basePath": config.Config.BasePath,
+		"location": "Home"},
 		"page.index.html")
 }
 
 func ShowLogsPage(c *gin.Context) {
 	// Render the logs-selection.html page
 	render(c, gin.H{
-		"title":   "Logs",
-		"basePath": Config.Config.BasePath,
+		"title":    "Logs",
+		"basePath": config.Config.BasePath,
 		"location": "Logs",
-		"services": Logging.Services}, 
+		"services": logging.Services,
+		"db_name":  config.Config.DB.Name},
 		"page.logs.html")
 }
 
 func ShowQueryPage(c *gin.Context) {
 	// Render the logs-selection.html page
 	render(c, gin.H{
-		"title":   "Logs",
-		"basePath": Config.Config.BasePath,
-		"location": "Query"}, 
+		"title":    "Logs",
+		"basePath": config.Config.BasePath,
+		"location": "Query",
+		"db_name":  config.Config.DB.Name},
 		"page.query.html")
 }
 
 func ShowSettingsPage(c *gin.Context) {
 	// Render the logs-selection.html page
 	render(c, gin.H{
-		"title":   "Settings",
-		"basePath": Config.Config.BasePath,
-		"location": "Settings",
-		"primary_color": Config.Config.Branding.PrimaryColor,
-		"secondary_color": Config.Config.Branding.SecondaryColor,
-		"tertiary_color": Config.Config.Branding.TertiaryColor,
-		"INFO_color": Config.Config.Branding.INFOColor,
-		"WARN_color": Config.Config.Branding.WARNColor,
-		"DEBUG_color": Config.Config.Branding.DEBUGColor,
-		"TRACE_color": Config.Config.Branding.TRACEColor,
-		"ERROR_color": Config.Config.Branding.ERRORColor}, 
+		"title":           "Settings",
+		"basePath":        config.Config.BasePath,
+		"location":        "Settings",
+		"primary_color":   config.Config.Branding.PrimaryColor,
+		"secondary_color": config.Config.Branding.SecondaryColor,
+		"tertiary_color":  config.Config.Branding.TertiaryColor,
+		"INFO_color":      config.Config.Branding.INFOColor,
+		"WARN_color":      config.Config.Branding.WARNColor,
+		"DEBUG_color":     config.Config.Branding.DEBUGColor,
+		"TRACE_color":     config.Config.Branding.TRACEColor,
+		"ERROR_color":     config.Config.Branding.ERRORColor},
 		"page.settings.html")
 }
 

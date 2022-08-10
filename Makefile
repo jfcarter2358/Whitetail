@@ -1,4 +1,4 @@
-.Phony: dependencies run build
+.PHONY: dependencies run-docker build-docker
 
 dependencies:
 	go get -u github.com/gin-gonic/gin
@@ -10,6 +10,7 @@ build-darwin:
 	cd whitetail; env GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build -v -o whitetail
 	mv whitetail/whitetail dist/whitetail
 	cp -r resources/* dist
+	cp -r build/* dist
 	mkdir dist/data
 	mkdir dist/saved
 	mkdir -p dist/config/custom/logo || true
@@ -23,15 +24,15 @@ build-linux:
 	cd whitetail; env GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -ldflags "-linkmode external -extldflags -static" -v -o whitetail
 	mv whitetail/whitetail dist/whitetail
 	cp -r resources/* dist
+	# cp -r build/* dist
 	mkdir dist/data
 	mkdir dist/saved
 	mkdir -p dist/config/custom/logo ||true
 	mkdir -p dist/config/custom/icon ||true
 
 build-docker:
-	make build-linux
-	docker build -t johncarterodg/whitetail:$(TAG) .
-	docker push johncarterodg/whitetail:$(TAG)
+	docker build -t whitetail .
 
-run: 
-	cd dist; ./whitetail
+run-docker:
+	docker-compose rm -f
+	docker-compose up

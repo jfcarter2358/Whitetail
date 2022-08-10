@@ -1,0 +1,57 @@
+/* shadows */
+.whitetail-shadow {box-shadow:0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);}
+.whitetail-vertical-shadow {box-shadow: 0px 2px #444444;}
+.whitetail-horizontal-shadow {box-shadow: 2px 0px #444444;}
+.whitetail-diagonal-shadow {box-shadow: 2px 2px #444444;}
+
+/* primary brand colors */
+.whitetail-dark-brown,.whitetail-hover-dark-brown:hover{color:#fff!important;background-color:#524632!important}
+.whitetail-brown,.whitetail-hover-brown:hover{color:#fff!important;background-color:#8F7E4F!important}
+.whitetail-sage,.whitetail-hover-sage:hover{color:#000!important;background-color:#C3C49E!important}
+
+/* secondary brand colors */
+
+.whitetail-white,.whitetail-hover-white:hover{color:#000!important;background-color:#f8f8ff!important}
+.whitetail-grey,.whitetail-hover-grey:hover{color:#fff!important;background-color:#03331e!important}
+.whitetail-black,.whitetail-hover-black:hover{color:#fff!important;background-color:#272727!important}
+.whitetail-red,.whitetail-hover-red:hover{color:#fff!important;background-color:#95190C!important}
+.whitetail-orange,.whitetail-hover-orange:hover{color:#000!important;background-color:#E24E1B!important}
+.whitetail-yellow,.whitetail-hover-yellow:hover{color:#000!important;background-color:#E3B505!important}
+.whitetail-green,.whitetail-hover-forest-green:hover{color:#fff!important;background-color:#4F772D!important}
+.whitetail-cyan,.whitetail-hover-blue:hover{color:#000!important;background-color:#107E7D!important}
+.whitetail-blue,.whitetail-hover-blue:hover{color:#fff!important;background-color:#2B50AA!important}
+.whitetail-purple,.whitetail-hover-yellow:hover{color:#000!important;background-color:#610345 !important}
+
+/* primary brand color text */
+.whitetail-text-dark-brown,.whitetail-hover-text-dark-brown:hover{color:#524632!important}
+.whitetail-text-brown,.whitetail-hover-text-brown:hover{color:#8F7E4F!important}
+.whitetail-text-sage,.whitetail-hover-text-sage:hover{color:#C3C49E!important}
+
+/* secondary brand color text */
+.whitetail-text-white,.whitetail-hover-text-white:hover{color:#f8f8ff!important}
+.whitetail-text-grey,.whitetail-hover-text-grey:hover{color:#03331e!important}
+.whitetail-text-black,.whitetail-hover-text-black:hover{color:#272727!important}
+.whitetail-text-red,.whitetail-hover-text-red:hover{color:#95190C!important}
+.whitetail-text-orange,.whitetail-hover-text-orange:hover{color:#E24E1B!important}
+.whitetail-text-yellow,.whitetail-hover-text-yellow:hover{color:#E3B505!important}
+.whitetail-text-green,.whitetail-hover-text-green:hover{color:#4F772D!important}
+.whitetail-text-cyan,.whitetail-hover-text-cyan:hover{color:#107E7D!important}
+.whitetail-text-blue,.whitetail-hover-text-blue:hover{color:#2B50AA!important}
+.whitetail-text-purple,.whitetail-hover-text-purple:hover{color:#610345!important}
+
+/* primary brand color border */
+.whitetail-border-dark-brown,.whitetail-hover-border-dark-brown:hover{border-color:#524632!important}
+.whitetail-border-brown,.whitetail-hover-border-brown:hover{border-color:#8F7E4F!important}
+.whitetail-border-sage,.whitetail-hover-border-sage:hover{border-color:#C3C49E!important}
+
+/* secondary brand color border */
+.whitetail-border-white,.whitetail-hover-border-white:hover{border-color:#f8f8ff!important}
+.whitetail-border-grey,.whitetail-hover-border-grey:hover{border-color:#03331e!important}
+.whitetail-border-black,.whitetail-hover-border-black:hover{border-color:#272727!important}
+.whitetail-border-red,.whitetail-hover-border-red:hover{border-color:#95190C!important}
+.whitetail-border-orange,.whitetail-hover-border-orange:hover{border-color:#E24E1B!important}
+.whitetail-border-yellow,.whitetail-hover-border-yellow:hover{border-color:#E3B505!important}
+.whitetail-border-green,.whitetail-hover-border-green:hover{border-color:#4F772D!important}
+.whitetail-border-cyan,.whitetail-hover-border-cyan:hover{border-color:#107E7D!important}
+.whitetail-border-blue,.whitetail-hover-border-blue:hover{border-color:#2B50AA!important}
+.whitetail-border-purple,.whitetail-hover-border-purple:hover{border-color:#610345!important}

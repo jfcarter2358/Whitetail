@@ -1,29 +1,33 @@
 // handler.config.go
 
-package Config
+package config
 
 import (
+	"encoding/json"
+	"io"
+	"io/ioutil"
 	"log"
 	"os"
-	"io/ioutil"
-	"encoding/json"
 	"strings"
-	"io"
 )
 
 type ConfigObject struct {
-	HTTPPort int                  `json:"http-port" binding:"required"`
-	TCPPort  int                  `json:"tcp-port" binding:"required"`
-	UDPPort  int                  `json:"udp-port" binding:"required"`
-	BasePath string               `json:"basepath" binding:"required"`
-	Database DatabaseConfigObject `json:"database" binding:"required"`
-	Logging  LoggingConfigObject  `json:"logging" binding:"required"`
-	Branding BrandingConfigObject `json:"branding" binding:"required"`
-	PrintElevatedMessages bool    `json:"print-elevated-messages" binding:"required"`
+	HTTPPort              int                  `json:"http-port" binding:"required"`
+	TCPPort               int                  `json:"tcp-port" binding:"required"`
+	UDPPort               int                  `json:"udp-port" binding:"required"`
+	BasePath              string               `json:"basepath" binding:"required"`
+	DB                    DatabaseConfigObject `json:"database" binding:"required"`
+	Logging               LoggingConfigObject  `json:"logging" binding:"required"`
+	Branding              BrandingConfigObject `json:"branding" binding:"required"`
+	PrintElevatedMessages bool                 `json:"print-elevated-messages" binding:"required"`
 }
 
 type DatabaseConfigObject struct {
-	URL     string `json:"url"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Name     string `json:"name"`
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
 }
 
 type BrandingConfigObject struct {
@@ -42,18 +46,18 @@ type ColorConfigObject struct {
 	Text       string `json:"text" binding:"required"`
 }
 
-type LoggingConfigObject struct { 
-	MaxAgeDays          int `json:"max-age-days"`
+type LoggingConfigObject struct {
+	MaxAgeDays          int    `json:"max-age-days"`
 	PollRate            string `json:"poll-rate"`
-	ConciseLogger       bool `json:"concise-logger"`
-	HoverableLongLogger bool `json:"hoverable-long-logger"`
+	ConciseLogger       bool   `json:"concise-logger"`
+	HoverableLongLogger bool   `json:"hoverable-long-logger"`
 }
 
 var Config ConfigObject
 
 var Defaults BrandingConfigObject
 
-func ReadConfigFile() *ConfigObject{
+func ReadConfigFile() *ConfigObject {
 	// Open our jsonFile
 	jsonFile, err := os.Open("config/config.json")
 	// if we os.Open returns an error then handle it
@@ -61,7 +65,7 @@ func ReadConfigFile() *ConfigObject{
 		log.Println("Unable to read json file")
 		panic(err)
 	}
-	
+
 	log.Println("Successfully Opened config/config.json")
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
@@ -88,8 +92,8 @@ func ReadConfigFile() *ConfigObject{
 
 func UpdateBranding() {
 	dat, err := ioutil.ReadFile("static/css/branding.template.css")
-    if err != nil {
-        panic(err)
+	if err != nil {
+		panic(err)
 	}
 	out := string(dat)
 	out = strings.ReplaceAll(out, "[[T1]]", Config.Branding.PrimaryColor.Text)
@@ -106,13 +110,13 @@ func UpdateBranding() {
 	out = strings.ReplaceAll(out, "[[ERROR]]", Config.Branding.ERRORColor)
 
 	f, err := os.Create("static/css/branding.css")
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 	defer f.Close()
-	
+
 	_, err = f.WriteString(out)
-	if err != nil { 
+	if err != nil {
 		panic(err)
 	}
 }
@@ -122,32 +126,32 @@ func InitLogoIcon() {
 	if _, err := os.Stat("config/custom/logo/logo.png"); err == nil {
 		log.Println("Copying custom logo file")
 		source, err := os.Open("config/custom/logo/logo.png")
-        if err != nil {
-                panic(err)
-        }
-        defer source.Close()
+		if err != nil {
+			panic(err)
+		}
+		defer source.Close()
 
-        destination, err := os.Create("static/img/logo.png")
-        if err != nil {
-                panic(err)
-        }
-        defer destination.Close()
-        _, err = io.Copy(destination, source)
+		destination, err := os.Create("static/img/logo.png")
+		if err != nil {
+			panic(err)
+		}
+		defer destination.Close()
+		_, err = io.Copy(destination, source)
 	}
 
 	if _, err := os.Stat("config/custom/icon/favicon.png"); err == nil {
 		log.Println("Copying custom icon file")
 		source, err := os.Open("config/custom/icon/favicon.png")
-        if err != nil {
-                panic(err)
-        }
-        defer source.Close()
+		if err != nil {
+			panic(err)
+		}
+		defer source.Close()
 
-        destination, err := os.Create("static/img/favicon.png")
-        if err != nil {
-                panic(err)
-        }
-        defer destination.Close()
-        _, err = io.Copy(destination, source)
+		destination, err := os.Create("static/img/favicon.png")
+		if err != nil {
+			panic(err)
+		}
+		defer destination.Close()
+		_, err = io.Copy(destination, source)
 	}
 }

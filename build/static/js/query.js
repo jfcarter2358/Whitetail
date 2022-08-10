@@ -1,7 +1,5 @@
 function query(basePath) {
     queryString = $("#query").val()
-    dbName = $("#db_name").text()
-    queryString = queryString.replace("${db}", dbName)
     document.getElementById("loader").style.display = "block";
     $.ajax({
         type: "POST",

@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  api-server:
+    image: "whitetail"
+    ports:
+      - "127.0.0.1:9001:9001"
+      - "127.0.0.1:9002:9002"
+      - "127.0.0.1:9003:9003"
+    depends_on:
+      - "ceresdb"
+    tty: true
+  ceresdb:
+    image: "ceresdb"
+    ports:
+      - "127.0.0.1:7437:7437"
+    environment:
+      CERESDB_LOG_LEVEL: "info"
+    tty: true

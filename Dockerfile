@@ -1,23 +1,42 @@
-FROM ubuntu:18.04
+FROM golang:1.18.1-alpine
 
-RUN apt-get update
-RUN mkdir /whitetail
+RUN apk update && apk add git
+
+WORKDIR /whitetail-build
+COPY whitetail /whitetail-build
+RUN env GOOS=linux CGO_ENABLED=0 go build -v -o whitetail
+
+FROM alpine:latest
+
+USER 0
+
+RUN adduser --disabled-password whitetail
+
+WORKDIR /whitetail
+
+COPY --from=0 /whitetail-build/whitetail ./
+
+RUN apk update \
+    && apk add \
+    bash
+
+SHELL ["/bin/bash", "-c"]
+
 RUN mkdir /whitetail/data
 RUN mkdir /whitetail/saved
 RUN mkdir -p /whitetail/config/custom/icon
 RUN mkdir -p /whitetail/config/custom/logo
 
-# add whitetail distribution
-ADD dist/whitetail /whitetail/whitetail
-
 # add resources
-ADD dist/config /whitetail/config
-ADD dist/static /whitetail/static
-ADD dist/templates /whitetail/templates
+COPY resources/config /whitetail/config
+COPY resources/static /whitetail/static
+COPY resources/templates /whitetail/templates
 
 # make it executable
 RUN chmod +x /whitetail/whitetail
 
-WORKDIR /whitetail
+RUN chown -R whitetail:whitetail /whitetail
+
+USER whitetail
 
 CMD ["/whitetail/whitetail"]

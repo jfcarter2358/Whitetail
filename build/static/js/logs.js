@@ -1,18 +1,18 @@
 
 var levelList = ['INFO', 'WARN', 'DEBUG', 'TRACE', 'ERROR']
 
-function formatQuery(dbName, service, limit) {
+function formatQuery(db_name, service, limit) {
     if (levelList.length == 0) {
         return ""
     } else {
-        infoList = `level = "${levelList[0]}"`
+        infoList = '"level" = ' + levelList[0]
         for (var i = 1; i < levelList.length; i++) {
-            infoList = `${infoList} OR level = "${levelList[i]}"`
+            infoList = infoList + ' OR "level" = ' + levelList[i]
         }
 
         // console.log(infoList);
         // console.log(`SELECTBY (((service = ${service} AND level IN ${infoList}) ORDERDESC timestamp) LIMIT ${limit})`);
-        return `GET RECORD ${dbName}.logs * | FILTER service = "${service}" AND ( ${infoList} ) | ORDERDSC timestamp | LIMIT ${limit}`.trim()
+        return `GET RECORD ${dbName}.logs * | FILTER (${infoList}) AND "service" = ${service} | ORDERDSC "timestamp" | LIMIT ${limit}`
         // return `SELECTBY (((service = ${service} AND level IN ${infoList}) ORDERDESC timestamp) LIMIT ${limit})`
     }
 }
@@ -55,8 +55,7 @@ function changeService(basePath, service) {
     $("#services_button").html("Service Filter: " + service + '<i class="fas fa-caret-down" style="position: absolute; right: 10px;top: 12px;"></i>');
     toggleDropdown('services_dropdown')
     lineLimit = $("#line_limit").val()
-    dbName = $("#db_name").text()
-    queryString = formatQuery(dbName, service, lineLimit)
+    queryString = formatQuery(db_name, service, lineLimit)
     console.log(queryString)
     if (queryString == "" ) {
         $("#logs").html("")
@@ -92,8 +91,7 @@ function refreshLogs(basePath) {
         lineLimit = $("#line_limit").val()
         realService = service.split(": ");
         console.log(realService)
-        dbName = $("#db_name").text()
-        queryString = formatQuery(dbName, realService[1], lineLimit)
+        queryString = formatQuery(realService[1], lineLimit)
         console.log(queryString)
         if (queryString == "" ) {
             $("#logs").html("")

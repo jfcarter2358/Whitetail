@@ -1,70 +1,15 @@
 <!-- page.setttings.html -->
 
-<!--header.html-->
-
-<!doctype html>
-<html>
-  <head>
-    <!--Use the `title` variable to set the title of the page-->
-    <title>{{ .title }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta charset="UTF-8">
-
-    <!-- add the icon -->
-    <link rel="icon" href="{{ .basePath }}/resources/img/favicon.png">
-    <!-- add the common javascript -->
-    <script src="{{ .basePath }}/resources/js/common.js"></script>
-    
-    <!-- add w3 css -->
-    <link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css">
-    <!-- add jquery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- add font-awesome -->
-    <script src="https://kit.fontawesome.com/caffed82f9.js" crossorigin="anonymous"></script>
-    <!-- whitetail branding styles -->
-    <link rel="stylesheet" type="text/css" href="{{ .basePath }}/resources/css/style.css">
-    <link rel="stylesheet" type="text/css" href="{{ .basePath }}/resources/css/branding.css">
+<!-- import header.html -->
 <!-- give us the ability to add page specific things to the head of the document here -->
 <!-- i.e. loading a page specific js file or stylesheet -->
 <script src="{{ .basePath }}/resources/js/settings.js"></script>
 
 </head>
 <body class="whitetail-white">
-<div class="w3-sidebar w3-bar-block w3-card w3-white w3-border w3-border-grey" id="sidebar" style="width:15%;display:block">
-    <div class="w3-bar-item w3-large branding-primary" style="cursor:default;">
-        <img src="{{ .basePath }}/resources/img/logo.png" width="100%;">
-    </div>
-    <!-- <button class="w3-bar-item w3-button w3-large w3-dark-grey" onclick="w3_close()">Close &times;</button> -->
-    <a href="{{ .basePath }}/ui/home" class="w3-bar-item w3-button branding-hover-secondary">
-        <i class="fas fa-home"></i>
-        <p style="display:inline-block;margin-left:5px;margin-top:1px;margin-bottom:1px;">Home</p>
-    </a>
-    <a href="{{ .basePath }}/ui/logs" class="w3-bar-item w3-button branding-hover-secondary">
-        <i class="fas fa-server"></i>
-        <p style="display:inline-block;margin-left:5px;margin-top:1px;margin-bottom:1px;">Logs</p>
-    </a>
-    <a href="{{ .basePath }}/ui/query" class="w3-bar-item w3-button branding-hover-secondary">
-        <i class="fas fa-search"></i>
-        <p style="display:inline-block;margin-left:5px;margin-top:1px;margin-bottom:1px;">Query</p>
-    </a>
-    <a href="{{ .basePath }}/ui/settings" class="w3-bar-item w3-button branding-hover-secondary">
-        <i class="fas fa-cog"></i>
-        <p style="display:inline-block;margin-left:5px;margin-top:1px;margin-bottom:1px;">Settings</p>
-    </a>
-    <div class="branding-primary w3-left-align" style="position:absolute;bottom:0;width:100%;padding:8px;">
-        Powered by <a href="https://github.com/jfcarter2358/whitetail">Whitetail</a>
-    </div>
-</div>
+<!-- import sidebar.html -->
 <div id="main" style="margin-left:15%;">
-  <!--menu.html-->
-  
-  <div class="w3-bar branding-secondary whitetail-shadow" style="padding-bottom:2px;">
-    <!-- <button id="openNav" class="w3-button w3-dark-grey w3-large" style="float:left;" onclick="w3_open()">&#9776;</button> -->
-    <a>
-      <div class="w3-large w3-padding branding-secondary" style="float:left;cursor:default;">{{ .location }}</div>
-    </a>
-  </div>
-  
+  <!-- import menu.html -->
   <br>
   <div id="contents" class="w3-container">
     <div class="w3-card">
@@ -210,8 +155,4 @@
 </div>
 
 <!--Embed the footer.html template at this location-->
-<!--footer.html-->
-
-  </body>
-
-</html>
+<!-- import footer.html -->

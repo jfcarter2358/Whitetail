@@ -16,9 +16,12 @@ service = sys.argv[1]
 logger_name = 'test.logger.TestLogger'
 stack_trace = ''
 
+count = 300
+
 host = "localhost"
 port = 9002
-for i in range(0, 30):
+print('Sending WARN messages')
+for i in range(0, count):
     level = 'WARN'
     timestamp = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
     data = {
@@ -32,10 +35,10 @@ for i in range(0, 30):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
     s.sendall(json.dumps(data).encode('utf-8'))
-    data = s.recv(1024)
     s.close()
-    print('Received', repr(data))
-for i in range(0, 30):
+print('Done!')
+print('Sending ERROR messages')
+for i in range(0, count):
     level = 'ERROR'
     timestamp = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
     data = {
@@ -49,10 +52,10 @@ for i in range(0, 30):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
     s.sendall(json.dumps(data).encode('utf-8'))
-    data = s.recv(1024)
     s.close()
-    print('Received', repr(data))
-for i in range(0, 30):
+print('Done!')
+print('Sending TRACE messages')
+for i in range(0, count):
     level = 'TRACE'
     timestamp = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
     data = {
@@ -66,10 +69,10 @@ for i in range(0, 30):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
     s.sendall(json.dumps(data).encode('utf-8'))
-    data = s.recv(1024)
     s.close()
-    print('Received', repr(data))
-for i in range(0, 30):
+print('Done!')
+print('Sending INFO messages')
+for i in range(0, count):
     level = 'INFO'
     timestamp = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
     data = {
@@ -83,10 +86,10 @@ for i in range(0, 30):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
     s.sendall(json.dumps(data).encode('utf-8'))
-    data = s.recv(1024)
     s.close()
-    print('Received', repr(data))
-for i in range(0, 30):
+print('Done!')
+print('Sending DEBUG messages')
+for i in range(0, count):
     level = 'DEBUG'
     timestamp = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
     data = {
@@ -100,6 +103,5 @@ for i in range(0, 30):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
     s.sendall(json.dumps(data).encode('utf-8'))
-    data = s.recv(1024)
     s.close()
-    print('Received', repr(data))
+print('Done!')
