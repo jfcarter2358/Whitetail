@@ -275,6 +275,8 @@ func StartUDPServer(conn_port int) {
 
 func parseData(data string) {
 	messages := strings.Split(data, "\n")
+
+	fmt.Printf("%v\n", messages)
 	// messages[0] = leftover + messages[0]
 	for i := 0; i < len(messages); i++ {
 		shouldParse := true
@@ -301,6 +303,7 @@ func parseData(data string) {
 				input.LoggerName = input.Fields.LoggerName
 			}
 			if input.Service != "" {
+
 				if input.Timestamp == "" {
 					input.Timestamp = time.Now().Format("2006-01-02T15:04:05")
 				}

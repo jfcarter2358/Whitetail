@@ -4,22 +4,28 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
+	"reflect"
+	"strconv"
 	"strings"
 )
 
+const DEFAULT_CONFIG_PATH = "/whitetail/config/config.json"
+const ENV_PREFIX = "WHITETAIL_"
+
 type ConfigObject struct {
-	HTTPPort              int                  `json:"http-port" binding:"required"`
-	TCPPort               int                  `json:"tcp-port" binding:"required"`
-	UDPPort               int                  `json:"udp-port" binding:"required"`
-	BasePath              string               `json:"basepath" binding:"required"`
-	DB                    DatabaseConfigObject `json:"database" binding:"required"`
-	Logging               LoggingConfigObject  `json:"logging" binding:"required"`
-	Branding              BrandingConfigObject `json:"branding" binding:"required"`
-	PrintElevatedMessages bool                 `json:"print-elevated-messages" binding:"required"`
+	HTTPPort              int                  `json:"http-port" binding:"required" env:"HTTP_PORT"`
+	TCPPort               int                  `json:"tcp-port" binding:"required" env:"TCP_PORT"`
+	UDPPort               int                  `json:"udp-port" binding:"required" env:"UDP_PORT"`
+	BasePath              string               `json:"basepath" binding:"required" env:"BASE_PATH"`
+	DB                    DatabaseConfigObject `json:"database" binding:"required" env:"DB"`
+	Logging               LoggingConfigObject  `json:"logging" binding:"required" env:"LOGGING"`
+	Branding              BrandingConfigObject `json:"branding" binding:"required" env:"BRANDING"`
+	PrintElevatedMessages bool                 `json:"print-elevated-messages" binding:"required" env:"PRINT_ELEVATED_MESSAGES"`
 }
 
 type DatabaseConfigObject struct {
@@ -57,37 +63,157 @@ var Config ConfigObject
 
 var Defaults BrandingConfigObject
 
-func ReadConfigFile() *ConfigObject {
-	// Open our jsonFile
-	jsonFile, err := os.Open("config/config.json")
-	// if we os.Open returns an error then handle it
+func LoadConfig() {
+	configPath := os.Getenv(ENV_PREFIX + "CONFIG_PATH")
+	if configPath == "" {
+		configPath = DEFAULT_CONFIG_PATH
+	}
+
+	Defaults = BrandingConfigObject{
+		PrimaryColor: ColorConfigObject{
+			Background: "#C3C49E",
+			Text:       "#000000",
+		},
+		SecondaryColor: ColorConfigObject{
+			Background: "#8F7E4F",
+			Text:       "#ffffff",
+		},
+		TertiaryColor: ColorConfigObject{
+			Background: "#524632",
+			Text:       "#ffffff",
+		},
+		INFOColor:  "#4F772D",
+		WARNColor:  "#E24E1B",
+		DEBUGColor: "#2B50AA",
+		TRACEColor: "#610345",
+		ERRORColor: "#95190C",
+	}
+
+	Config = ConfigObject{
+		HTTPPort: 9001,
+		TCPPort:  9002,
+		UDPPort:  9003,
+		BasePath: "",
+		DB: DatabaseConfigObject{
+			Username: "ceresdb",
+			Password: "ceresdb",
+			Name:     "whitetail",
+			Port:     7437,
+			Host:     "ceresdb",
+		},
+		Logging: LoggingConfigObject{
+			MaxAgeDays:          2,
+			PollRate:            "1h",
+			ConciseLogger:       true,
+			HoverableLongLogger: false,
+		},
+		Branding:              Defaults,
+		PrintElevatedMessages: false,
+	}
+
+	if _, err := os.Stat(configPath); errors.Is(err, os.ErrNotExist) {
+		configData, _ := json.MarshalIndent(Config, "", " ")
+
+		_ = ioutil.WriteFile(configPath, configData, 0644)
+	}
+
+	jsonFile, err := os.Open(configPath)
 	if err != nil {
 		log.Println("Unable to read json file")
 		panic(err)
 	}
 
-	log.Println("Successfully Opened config/config.json")
+	log.Printf("Successfully Opened %v", configPath)
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
 	json.Unmarshal(byteValue, &Config)
 
-	// defer the closing of our jsonFile so that we can parse it later on
-	defer jsonFile.Close()
+	v := reflect.ValueOf(Config)
+	t := reflect.TypeOf(Config)
+
+	for i := 0; i < v.NumField(); i++ {
+		field, found := t.FieldByName(v.Type().Field(i).Name)
+		if !found {
+			continue
+		}
+
+		value := field.Tag.Get("env")
+		if value != "" {
+			val, present := os.LookupEnv(ENV_PREFIX + value)
+			if present {
+				w := reflect.ValueOf(&Config).Elem().FieldByName(t.Field(i).Name)
+				x := getAttr(&Config, t.Field(i).Name).Kind().String()
+				if w.IsValid() {
+					switch x {
+					case "int", "int64":
+						i, err := strconv.ParseInt(val, 10, 64)
+						if err == nil {
+							w.SetInt(i)
+						}
+					case "int8":
+						i, err := strconv.ParseInt(val, 10, 8)
+						if err == nil {
+							w.SetInt(i)
+						}
+					case "int16":
+						i, err := strconv.ParseInt(val, 10, 16)
+						if err == nil {
+							w.SetInt(i)
+						}
+					case "int32":
+						i, err := strconv.ParseInt(val, 10, 32)
+						if err == nil {
+							w.SetInt(i)
+						}
+					case "string":
+						w.SetString(val)
+					case "float32":
+						i, err := strconv.ParseFloat(val, 32)
+						if err == nil {
+							w.SetFloat(i)
+						}
+					case "float", "float64":
+						i, err := strconv.ParseFloat(val, 64)
+						if err == nil {
+							w.SetFloat(i)
+						}
+					case "bool":
+						i, err := strconv.ParseBool(val)
+						if err == nil {
+							w.SetBool(i)
+						}
+					default:
+						objValue := reflect.New(field.Type)
+						objInterface := objValue.Interface()
+						err := json.Unmarshal([]byte(val), objInterface)
+						obj := reflect.ValueOf(objInterface)
+						if err == nil {
+							w.Set(reflect.Indirect(obj).Convert(field.Type))
+						} else {
+							log.Println(err)
+						}
+					}
+				}
+			}
+		}
+	}
 
 	UpdateBranding()
 	InitLogoIcon()
+}
 
-	Defaults.PrimaryColor = ColorConfigObject{Background: "#C3C49E", Text: "#000000"}
-	Defaults.SecondaryColor = ColorConfigObject{Background: "#8F7E4F", Text: "#000000"}
-	Defaults.TertiaryColor = ColorConfigObject{Background: "#524632", Text: "#ffffff"}
-	Defaults.INFOColor = "#4F772D"
-	Defaults.WARNColor = "#E24E1B"
-	Defaults.DEBUGColor = "#2B50AA"
-	Defaults.TRACEColor = "#610345"
-	Defaults.ERRORColor = "#95190C"
-
-	return &Config
+func getAttr(obj interface{}, fieldName string) reflect.Value {
+	pointToStruct := reflect.ValueOf(obj) // addressable
+	curStruct := pointToStruct.Elem()
+	if curStruct.Kind() != reflect.Struct {
+		panic("not struct")
+	}
+	curField := curStruct.FieldByName(fieldName) // type: reflect.Value
+	if !curField.IsValid() {
+		panic("not found:" + fieldName)
+	}
+	return curField
 }
 
 func UpdateBranding() {

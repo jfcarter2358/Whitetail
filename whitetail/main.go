@@ -24,7 +24,7 @@ func main() {
 	// Set Gin to production mode
 	gin.SetMode(gin.ReleaseMode)
 
-	config.ReadConfigFile()
+	config.LoadConfig()
 	routerPort := ":" + strconv.Itoa(config.Config.HTTPPort)
 
 	// Read in the compass data from the json file

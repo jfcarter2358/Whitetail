@@ -4,7 +4,7 @@ RUN apk update && apk add git
 
 WORKDIR /whitetail-build
 COPY whitetail /whitetail-build
-RUN env GOOS=linux CGO_ENABLED=0 go build -v -o whitetail
+RUN env GO111MODULE=on GOOS=linux CGO_ENABLED=0 go build -v -o whitetail
 
 FROM alpine:latest
 
@@ -28,7 +28,6 @@ RUN mkdir -p /whitetail/config/custom/icon
 RUN mkdir -p /whitetail/config/custom/logo
 
 # add resources
-COPY resources/config /whitetail/config
 COPY resources/static /whitetail/static
 COPY resources/templates /whitetail/templates
 

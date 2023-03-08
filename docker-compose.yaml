@@ -1,18 +1,20 @@
 version: "3.9"
 services:
-  api-server:
+  whitetail:
     image: "whitetail"
+    environment:
+      WHITETAIL_BASE_PATH: "/router/whitetail/whitetail/9001"
     ports:
-      - "127.0.0.1:9001:9001"
-      - "127.0.0.1:9002:9002"
-      - "127.0.0.1:9003:9003"
+      - "0.0.0.0:9001:9001"
+      - "0.0.0.0:9002:9002"
+      - "0.0.0.0:9003:9003"
     depends_on:
       - "ceresdb"
     tty: true
   ceresdb:
     image: "ceresdb"
     ports:
-      - "127.0.0.1:7437:7437"
+      - "0.0.0.0:7437:7437"
     environment:
       CERESDB_LOG_LEVEL: "info"
     tty: true
