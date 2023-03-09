@@ -53,10 +53,10 @@ type ColorConfigObject struct {
 }
 
 type LoggingConfigObject struct {
-	MaxAgeDays          int    `json:"max-age-days"`
-	PollRate            string `json:"poll-rate"`
-	ConciseLogger       bool   `json:"concise-logger"`
-	HoverableLongLogger bool   `json:"hoverable-long-logger"`
+	MaxAgeDays          int    `json:"max_age_days"`
+	PollRate            string `json:"poll_rate"`
+	ConciseLogger       bool   `json:"concise_logger"`
+	HoverableLongLogger bool   `json:"hoverable_long_logger"`
 }
 
 var Config ConfigObject

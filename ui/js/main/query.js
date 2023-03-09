@@ -27,8 +27,9 @@ function query(basePath) {
             document.getElementById("loader").style.display = "none";
         },
         error: function(data, status) {
+            console.log(data)
             document.getElementById("loader").style.display = "none";
-            alert(data)
+            alert(data.statusText)
         }
     });
 }

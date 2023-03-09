@@ -191,7 +191,13 @@ func Query(query string) ([]string, string) {
 		return []string{}, err.Error()
 	}
 	for _, datum := range data {
-		logs = append(logs, datum["message"].(string))
+		_, ok := datum["message"]
+		if ok {
+			logs = append(logs, datum["message"].(string))
+		} else {
+			message, _ := json.Marshal(datum)
+			logs = append(logs, string(message))
+		}
 	}
 
 	return logs, ""

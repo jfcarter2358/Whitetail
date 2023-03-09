@@ -2,5 +2,6 @@
 .python-version
 .DS_Store
 /misc
-/sonic
 /docs/build
+.vscode
+.go-version
