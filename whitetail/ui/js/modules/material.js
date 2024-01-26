@@ -1,37 +1,3 @@
-var theme;
-
-$(document).ready(function() {
-    theme = localStorage.getItem('scaffold-theme');
-    if (theme) {
-        if (theme == 'light') {
-            $('.dark').addClass('light').removeClass('dark');
-        } else {
-            $('.light').addClass('dark').removeClass('light');
-        }
-    } else {
-        theme = 'light'
-        localStorage.setItem('scaffold-theme', theme);
-    }
-})
-
-function toggleTheme() {
-    if (theme == 'light') {
-        theme = 'dark'
-        $('.light').addClass('dark').removeClass('light');
-    } else {
-        theme = 'light'
-        $('.dark').addClass('light').removeClass('dark');
-    }
-    localStorage.setItem('scaffold-theme', theme);
-}
-
-function closeModal(modalID) {
-    document.getElementById(modalID).style.display='none'
-}
-
-function openModal(modalID) {
-    document.getElementById(modalID).style.display='block'
-}
 function toggleSidebar() {
     var sidebar = document.getElementById("sidebar")
     var page_darken = document.getElementById("page-darken")
@@ -68,4 +34,3 @@ function toggleAccordion(id) {
         x.className = x.className.replace(" w3-show", "");
     }
 }
-

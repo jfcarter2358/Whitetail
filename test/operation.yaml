@@ -1,0 +1,156 @@
+probes:
+  a:
+    language: py
+    run: |
+      import time
+      import sys
+      import json
+      foo = int(sys.argv[1])
+      bar = int(sys.argv[2])
+      out = {
+        "h1": int(time.time()),
+        "h2": foo,
+        "h3": bar,
+        "h4": 0
+      }
+      print(f'{json.dumps(out)}')
+    arguments:
+      - foo
+      - bar
+    interval: 5000
+  # b:
+  #   language: sh
+  #   run: |
+  #     foo="$1"
+  #     bar="$2"
+  #     data_in="$(date +%s),0,0,0"
+  #     if [ -f "${script_directory}/${foo}_${bar}_output_old.txt" ]; then
+  #       cat "${script_directory}/${foo}_${bar}_output_old.txt" > "${script_directory}/output_new.txt"
+  #       echo "${data_in}" >> "${script_directory}/output_new.txt"
+  #       new_logs="$(diff --changed-group-format='%<' --unchanged-group-format='' "${script_directory}/output_new.txt" "${script_directory}/${foo}_${bar}_output_old.txt")"
+  #       echo "${new_logs}"
+  #     else
+  #       echo "${data_in}" > "${script_directory}/output_new.txt"
+  #     fi
+  #     cat "${script_directory}/output_new.txt" > "${script_directory}/${foo}_${bar}_output_old.txt"
+  #   arguments:
+  #     - foo
+  #     - bar
+  #   interval: 2000
+analysts:
+  a:
+    language: sh
+    run: |
+      echo "${data_in}"
+  b:
+    language: py
+    run: |
+      data_out = data_in.replace('0','9')
+      print(data_out)
+dashboards:
+  a:
+    aspect_ratio: 0.5
+    layout:
+      graphs:
+        - name: a
+          title: a
+          source: get record from whitetail.a__a
+          x_coord: 0
+          y_coord: 0
+          row_span: 1
+          col_span: 1
+          x: h1
+          ys: [h2, h3]
+          y_labels: [h2, h3]
+          x_axis_label: foo
+          y_axis_label: bar
+          refresh: 5000
+          colors: ['rgb(255, 0, 0)','rgb(0, 255, 0)']
+          width: 50%
+          height: 40%
+        - name: b
+          title: b
+          source: get record from whitetail.b__a
+          x_coord: 0
+          y_coord: 1
+          row_span: 1
+          col_span: 1
+          x: h1
+          ys: [h2, h3]
+          y_labels: [h2, h3]
+          x_axis_label: foo
+          y_axis_label: bar
+          refresh: 5000
+          colors: ['rgb(255, 0, 0)','rgb(0, 255, 0)']
+          width: 50%
+          height: 40%
+      streams:
+        - name: a
+          source: a__a
+          x_coord: 1
+          y_coord: 1
+          row_span: 1
+          col_span: 2
+          refresh: 5000
+      table:
+        - name: a
+          x_coord: 0
+          y_coord: 2
+          row_span: 2
+          col_span: 2
+          source: b__a
+          refresh: 5000
+observers:
+  a:
+    streams:
+      a:
+        schema:
+          h1: int
+          h2: int
+          h3: int
+          h4: int
+        probe: a
+        analyst: a
+        arguments:
+          foo: 7
+          bar: 7
+  b:
+    streams:
+      a:
+        schema:
+          h1: int
+          h2: int
+          h3: int
+          h4: int
+        probe: a
+        analyst: b
+        arguments:
+          foo: 8
+          bar: 8
+  c:
+    streams:
+      a:
+        schema:
+          h1: int
+          h2: int
+          h3: int
+          h4: int
+        probe: b
+        analyst: a
+        arguments:
+          foo: 9
+          bar: 9
+  d:
+    streams:
+      a:
+        schema:
+          h1: int
+          h2: int
+          h3: int
+          h4: int
+        probe: b
+        analyst: b
+        arguments:
+          foo: 1
+          bar: 1
+

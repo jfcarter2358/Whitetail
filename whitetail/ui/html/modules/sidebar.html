@@ -1,0 +1,30 @@
+<div class="w3-sidebar w3-bar-block w3-card w3-border light theme-border theme-border-light theme-light sidebar" id="sidebar" style="z-index:996;left:-300px;">
+    <div class="w3-container w3-border-bottom whitetail-brown w3-container sidebar-header">
+        <div class="w3-large w3-container w3-cell w3-cell-middle w3-left-align default-cursor sidebar-item">
+            <i class="fa-solid fa-bars w3-large" onclick="toggleSidebar()"></i>
+        </div>
+        <div class="w3-large w3-container w3-cell w3-cell-middle w3-left-align sidebar-item">
+            <h3>Whitetail</h3>
+        </div>
+    </div>
+    <a href="/ui/home" class="w3-bar-item w3-button light theme-border-light w3-border-bottom whitetail-hover-sage">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <a href="/ui/query" class="w3-bar-item w3-button light theme-border-light w3-border-bottom whitetail-hover-sage">
+        <i class="fas fa-search"></i> Query
+    </a>
+    <div class="w3-container w3-border-bottom whitetail-brown w3-container sidebar-header">
+        <div class="w3-large w3-container w3-cell w3-cell-middle w3-left-align sidebar-item">
+            <h5>Dashboards</h5>
+        </div>
+    </div>
+    {{ range .dashboards }}
+    <a href="/ui/dashboard/{{ . }}" class="w3-bar-item w3-button light theme-border-light w3-border-bottom whitetail-hover-sage">
+        <i class="fas fa-guage"></i> {{ . }}
+    </a>
+    {{ end }}
+    <div class="w3-border-top theme-border-light whitetail-tan w3-container sidebar-copyright" style="position:absolute;bottom:0px;">
+        &copy; 2023 John Carter v{{ .version }}
+        <i class="fa-solid fa-palette w3-right sidebar-theme whitetail-text-sage" onclick="toggleTheme()" id="theme-button"></i>
+    </div>
+</div>

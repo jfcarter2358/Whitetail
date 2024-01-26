@@ -1,15 +1,15 @@
 {
     "log_level": "INFO",
     "in": {
-        "css": "ui/css",
-        "html": "ui/html",
-        "img": "ui/img",
-        "js": "ui/js"
+        "css": "whitetail/ui/css",
+        "html": "whitetail/ui/html",
+        "img": "whitetail/ui/img",
+        "js": "whitetail/ui/js"
     },
     "out": {
-        "css": "resources/static/css",
-        "html": "resources/templates",
-        "img": "resources/static/img",
-        "js": "resources/static/js"
+        "css": "whitetail/ui-dist/static/css",
+        "html": "whitetail/ui-dist/templates",
+        "img": "whitetail/ui-dist/static/img",
+        "js": "whitetail/ui-dist/static/js"
     }
 }

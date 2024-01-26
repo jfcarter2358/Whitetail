@@ -1,0 +1,20 @@
+<div class="light theme-base">
+    <table class="w3-table" id="display-table">
+        {{ range $y := .rows }}
+            <tr>
+                {{ range $.graphs }}
+                    {{ if eq .y_coord $y }}
+                        <td colspan="{{ .colspan }}" rowspan="{{ .rowspan }}" width="{{ .width }}" height="{{ .height }}">
+                            <div style="display:none;">{{ .string_def }}</div>
+                            <div class="w3-card-4 w3-round light theme-border-light w3-border w3-container" id="graph-{{ .name }}">
+                            </div>
+                        </td>
+                    {{ else }}
+                        <td>
+                        </td>
+                    {{ end }}
+                {{ end }}
+            </tr>
+        {{ end }}
+    </table>
+</div>

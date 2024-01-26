@@ -1,12 +1,13 @@
-FROM golang:1.18.1-alpine
+FROM golang:1.18.1-bullseye
 
-RUN apk update && apk add git
+RUN apt-get update -y \
+    && apt-get install -y git
 
 WORKDIR /whitetail-build
 COPY whitetail /whitetail-build
 RUN env GO111MODULE=on GOOS=linux CGO_ENABLED=0 go build -v -o whitetail
 
-FROM alpine:latest
+FROM ubuntu:latest
 
 USER 0
 
@@ -16,26 +17,19 @@ WORKDIR /whitetail
 
 COPY --from=0 /whitetail-build/whitetail ./
 
-RUN apk update \
-    && apk add \
-    bash
+RUN apt-get update \
+    && apt-get install -y \
+        bash \
+        python3
 
 SHELL ["/bin/bash", "-c"]
 
-RUN mkdir /whitetail/data
-RUN mkdir /whitetail/saved
-RUN mkdir -p /whitetail/config/custom/icon
-RUN mkdir -p /whitetail/config/custom/logo
-
-# add resources
-COPY resources/static /whitetail/static
-COPY resources/templates /whitetail/templates
+# Copy over built UI files
+COPY whitetail/ui-dist /whitetail
 
 # make it executable
 RUN chmod +x /whitetail/whitetail
 
-RUN chown -R whitetail:whitetail /whitetail
-
-USER whitetail
+# RUN chown -R whitetail:whitetail /whitetail
 
 CMD ["/whitetail/whitetail"]
