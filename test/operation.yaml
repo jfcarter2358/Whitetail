@@ -5,13 +5,14 @@ probes:
       import time
       import sys
       import json
+      import random
       foo = int(sys.argv[1])
       bar = int(sys.argv[2])
       out = {
         "h1": int(time.time()),
         "h2": foo,
         "h3": bar,
-        "h4": 0
+        "h4": random.randint(0, 9)
       }
       print(f'{json.dumps(out)}')
     arguments:
@@ -45,61 +46,133 @@ analysts:
   b:
     language: py
     run: |
-      data_out = data_in.replace('0','9')
+      import json
+      data = json.loads(data_in)
+      data['h2'] = 100
+      data_out = json.dumps(data)
       print(data_out)
 dashboards:
   a:
     aspect_ratio: 0.5
-    layout:
-      graphs:
-        - name: a
-          title: a
-          source: get record from whitetail.a__a
-          x_coord: 0
-          y_coord: 0
-          row_span: 1
-          col_span: 1
-          x: h1
-          ys: [h2, h3]
-          y_labels: [h2, h3]
-          x_axis_label: foo
-          y_axis_label: bar
-          refresh: 5000
-          colors: ['rgb(255, 0, 0)','rgb(0, 255, 0)']
-          width: 50%
-          height: 40%
-        - name: b
-          title: b
-          source: get record from whitetail.b__a
-          x_coord: 0
-          y_coord: 1
-          row_span: 1
-          col_span: 1
-          x: h1
-          ys: [h2, h3]
-          y_labels: [h2, h3]
-          x_axis_label: foo
-          y_axis_label: bar
-          refresh: 5000
-          colors: ['rgb(255, 0, 0)','rgb(0, 255, 0)']
-          width: 50%
-          height: 40%
-      streams:
-        - name: a
-          source: a__a
-          x_coord: 1
-          y_coord: 1
-          row_span: 1
-          col_span: 2
-          refresh: 5000
-      table:
-        - name: a
-          x_coord: 0
-          y_coord: 2
-          row_span: 2
-          col_span: 2
-          source: b__a
-          refresh: 5000
+    panels:
+      - name: a
+        title: a
+        kind: graph
+        source: get record from whitetail.a__a order ascending h1
+        x_coord: 0
+        y_coord: 0
+        row_span: 2
+        col_span: 1
+        x: h1
+        ys: [h2, h3, h4]
+        y_labels: [h2, h3, h4]
+        x_axis_label: foo
+        y_axis_label: bar
+        refresh: 5000
+        colors: ['rgb(255, 0, 0)','rgb(0, 255, 0)']
+        width: 600
+        height: 400
+      - name: b
+        kind: graph
+        title: b
+        source: get record from whitetail.b__a order ascending h1
+        x_coord: 0
+        y_coord: 2
+        row_span: 1
+        col_span: 1
+        x: h1
+        ys: [h2, h3, h4]
+        y_labels: [h2, h3, h4]
+        x_axis_label: foo
+        y_axis_label: bar
+        refresh: 5000
+        colors: ['rgb(255, 0, 0)','rgb(0, 255, 0)']
+        width: 600
+        height: 400
+      - name: c
+        kind: button
+        title: Foobar Button
+        x_coord: 1
+        y_coord: 0
+        row_span: 1
+        col_span: 1
+        width: 600
+        height: 180
+        callback: foobar()
+        js: |
+          function foobar() {
+              $.ajax({
+                  type: "POST",
+                  url: "/api/v1/function/foobar",
+                  data: JSON.stringify({"data": {"hello": "world"}}),
+                  contentType:"application/json;",
+                  dataType:"json",
+                  success: function(data, status) {
+                      console.log(data)
+                  },
+                  error: function(data, status) {
+                      console.log(data)
+                  }
+              });
+          }
+      - name: d
+        kind: button
+        title: Foobar Button
+        x_coord: 1
+        y_coord: 1
+        row_span: 1
+        col_span: 1
+        width: 600
+        height: 180
+        callback: foobar()
+        js: |
+          function foobar() {
+              $.ajax({
+                  type: "POST",
+                  url: "/api/v1/function/foobar",
+                  data: JSON.stringify({"data": {"hello": "world"}}),
+                  contentType:"application/json;",
+                  dataType:"json",
+                  success: function(data, status) {
+                      console.log(data)
+                  },
+                  error: function(data, status) {
+                      console.log(data)
+                  }
+              });
+          }
+      - name: e
+        kind: stream
+        source: get record from whitetail.a__a order descending h1
+        x_coord: 1
+        y_coord: 2
+        row_span: 2
+        col_span: 1
+        refresh: 5000
+        width: 600
+        height: 400
+      - name: f
+        kind: table
+        x_coord: 0
+        y_coord: 3
+        row_span: 2
+        col_span: 2
+        source: get record from whitetail.b__a order descending h1 limit 5
+        refresh: 5000
+        width: 600
+        height: 400
+functions:
+  foobar:
+    language: py
+    run: |
+      import json
+      import sys
+
+      data = json.loads(sys.argv[1])
+      print('Hello from a callback!')
+      print(data)
+    arguments:
+      - data
 observers:
   a:
     streams:

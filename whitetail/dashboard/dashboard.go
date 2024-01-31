@@ -1,8 +1,7 @@
 package dashboard
 
-type Graph struct {
-	Observer   string   `yaml:"observer" json:"observer"`
-	Stream     string   `yaml:"stream" json:"stream"`
+type Panel struct {
+	Kind       string   `yaml:"kind" json:"kind"`
 	Name       string   `yaml:"name" json:"name"`
 	Source     string   `yaml:"source" json:"source"`
 	XCoord     int      `yaml:"x_coord" json:"x_coord"`
@@ -19,37 +18,11 @@ type Graph struct {
 	Colors     []string `yaml:"colors" json:"colors"`
 	Width      int      `yaml:"width" json:"width"`
 	Height     int      `yaml:"height" json:"height"`
-}
-
-type Stream struct {
-	Source  string `yaml:"source" json:"source"`
-	Name    string `yaml:"name" json:"name"`
-	XCoord  int    `yaml:"x_coord" json:"x_coord"`
-	YCoord  int    `yaml:"y_coord" json:"y_coord"`
-	RowSpan int    `yaml:"row_span" json:"row_span"`
-	ColSpan int    `yaml:"col_span" json:"col_span"`
-	Refresh int    `yaml:"refresh" json:"refresh"`
-	Title   string `yaml:"title" json:"title"`
-}
-
-type Table struct {
-	Source  string `yaml:"source" json:"source"`
-	Name    string `yaml:"name" json:"name"`
-	XCoord  int    `yaml:"x_coord" json:"x_coord"`
-	YCoord  int    `yaml:"y_coord" json:"y_coord"`
-	RowSpan int    `yaml:"row_span" json:"row_span"`
-	ColSpan int    `yaml:"col_span" json:"col_span"`
-	Refresh int    `yaml:"refresh" json:"refresh"`
-	Title   string `yaml:"title" json:"title"`
-}
-
-type Layout struct {
-	Graphs  []Graph  `yaml:"graphs" json:"graphs"`
-	Streams []Stream `yaml:"streams" json:"streams"`
-	Tables  []Table  `yaml:"tables" json:"tables"`
+	Callback   string   `yaml:"callback" json:"callback"`
+	JS         string   `yaml:"js" json:"js"`
 }
 
 type Dashboard struct {
-	Layout      Layout  `yaml:"layout" json:"layout"`
+	Panels      []Panel `yaml:"panels" json:"panels"`
 	AspectRatio float64 `yaml:"aspect_ratio" json:"aspect_ratio"`
 }

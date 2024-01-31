@@ -19,6 +19,10 @@
     <script src="/static/js/dashboard.js"></script>
     <!-- include plotly.js -->
     <script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
+    {{ range .scripts }}
+    {{ . | unescapeHTML }}
+    {{ end }}
+    
   </head>
   <body class="light theme-base">
     <div id="error-modal" class="w3-modal" style="z-index:1000;">
@@ -87,18 +91,35 @@
         <div class="card-container w3-container">
           <div class="light theme-base">
               <table class="w3-table" id="display-table">
-                  {{ range $y := .rows }}
+                  {{ range $row := .panels }}
                       <tr>
-                          {{ range $.graphs }}
-                              {{ if eq .y_coord $y }}
-                                  <td colspan="{{ .colspan }}" rowspan="{{ .rowspan }}" width="{{ .width }}" height="{{ .height }}">
-                                      <div style="display:none;">{{ .string_def }}</div>
-                                      <div class="w3-card-4 w3-round light theme-border-light w3-border w3-container" id="graph-{{ .name }}">
-                                      </div>
-                                  </td>
-                              {{ else }}
-                                  <td>
-                                  </td>
+                          {{ range $row }}
+                              {{ if eq .kind "graph" }}
+                              <td colspan="{{ .col_span }}" rowspan="{{ .row_span }}" width="{{ .width }}" height="{{ .height }}" style="height:{{ .height }}px;">
+                                  <div style="display:none;">{{ .string_def }}</div>
+                                  <div class="w3-card-4 w3-round light theme-border-light w3-border w3-container" id="graph-{{ .name }}" width="100%" height="100%" style="height:100%;">
+                                  </div>
+                              </td>
+                              {{ else if eq .kind "stream" }}
+                              <td colspan="{{ .col_span }}" rowspan="{{ .row_span }}" width="{{ .width }}" height="{{ .height }}" style="height:{{ .height }}px;">
+                                  <div style="display:none;">{{ .string_def }}</div>
+                                  <div class="w3-card-4 w3-round light theme-border-light w3-border w3-container" id="stream-{{ .name }}" width="100%" height="100%" style="height:100%;overflow-y:auto;">
+                                  </div>
+                              </td>
+                              {{ else if eq .kind "table" }}
+                              <td colspan="{{ .col_span }}" rowspan="{{ .row_span }}" width="{{ .width }}" height="{{ .height }}" style="height:{{ .height }}px;">
+                                  <div style="display:none;">{{ .string_def }}</div>
+                                  <table class="w3-card-4 w3-round light theme-border-light w3-border w3-table w3-striped w3-bordered" id="table-{{ .name }}" width="100%" height="100%" style="height:100%;overflow-y:auto;">
+                                  </table>
+                              </td>
+                              {{ else if eq .kind "button" }}
+                              <td colspan="{{ .col_span }}" rowspan="{{ .row_span }}" width="{{ .width }}" height="{{ .height }}" style="height:{{ .height }}px;" width="100%" height="100%" style="height:100%;">
+                                  <div style="display:none;">{{ .string_def }}</div>
+                                  <script type="text/json" id="script-{{ .name }}"></script>
+                                  <div class="w3-button w3-round light theme-light" id="button-{{ .name }}" width="100%" height="100%" style="height:100%;">{{ .title }}</div>
+                              </td>
+                              {{ else if eq .kind "empty" }}
+                                  <td></td>
                               {{ end }}
                           {{ end }}
                       </tr>

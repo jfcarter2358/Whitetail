@@ -17,12 +17,10 @@ const Line = class {
         this.height = init["height"]
         this.source = init["source"]
 
-        console.log(`name1: ${this.plotName}`)
-
         this.Build()
-        setTimeout(function() {
+        setInterval(function() {
             this.Update()
-        }, this.refresh)
+        }.bind(this), this.refresh)
 
     }
 
@@ -83,7 +81,7 @@ const Line = class {
             },
             error: function(data, status) {
                 console.log(data)
-                $("#error-container").text(error)
+                $("#error-container").text(data.responseText)
                 openModal('error-modal')
             }
         });
@@ -169,7 +167,7 @@ const Line = class {
         }
 
         // Plotly.redraw(`graph-${this.observer}-${this-stream}`);
-        Plotly.redraw(`graph-${this.name}`)
+        Plotly.redraw(`graph-${this.plotName}`)
     }
 
     Update() {
@@ -181,22 +179,12 @@ const Line = class {
             dataType:"json",
             success: function(data, status) {
                 this.Render(data)
-            },
+            }.bind(this),
             error: function(data, status) {
                 console.log(data)
-                $("#error-container").text(error)
+                $("#error-container").html(data.responseText)
                 openModal('error-modal')
             }
         });
-        // fetch(`/api/v1/basestation/${this.observer}/${this.stream}`)
-        // .then((response) => response.json())
-        // .then((rawData) => {
-        //     this.RenderGraph(rawData)
-        // })
-        // .catch((error) => {
-        //     console.log(error);
-        //     $("#error-container").text(error)
-        //     openModal('error-modal')
-        // });
     }
 }

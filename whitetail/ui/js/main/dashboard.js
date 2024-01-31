@@ -1,31 +1,54 @@
 // import line.js
+// import stream.js
+// import table.js
 // import theme.js
 // import modal.js
 // import material.js
+// import button.js
 
 var graphs = []
+var streams = []
+var tables = []
+var buttons = []
 
 function LoadDashboard() {
     let displayTable = $("#display-table")
     let body = $(displayTable).children('tbody')[0]
     let rows = $(body).children("tr")
-    for (row of rows) {
+    for (let row of rows) {
         let cells = $(row).children('td')
-        for (cell of cells) {
+        for (let cell of cells) {
+            let divs = $(cell).children()
             let first = true
-            let divs = $(cell).children('div')
-            let graphDef = ""
-            for (div of divs) {
+            let defs = []
+            let ids = []
+            for (let div of divs) {
                 if (first) {
-                    graphDef = $(div).text()
+                    defs.push($(div).text())
                     first = false
                     continue
                 }
-                console.log(`loading graph ${$(div).attr('id')}`)
+                let id = $(div).attr('id')
+                if (id.startsWith('script-')) {
+                    continue
+                }
+                ids.push(id)
+                console.log(`loading item ${id}`)
             }
-            if (graphDef.length > 0) {
-                console.log(`graph def: ${graphDef}`)
-                graphs.push(new Line(JSON.parse(graphDef)))
+            for (let i = 0; i < defs.length; i++) {
+                let def = defs[i]
+                let id = ids[i]
+                console.log(`item def: ${def}`)
+                console.log(`item id : ${id}`)
+                if (id.startsWith('graph-')) { 
+                    graphs.push(new Line(JSON.parse(def)))
+                } else if (id.startsWith('stream-')) {
+                    streams.push(new Stream(JSON.parse(def)))
+                } else if (id.startsWith('table-')) {
+                    tables.push(new Table(JSON.parse(def)))
+                } else if (id.startsWith('button-')) {
+                    buttons.push(new Button(JSON.parse(def)))
+                }
             }
         }
     }

@@ -19,7 +19,7 @@ func DoAnalyze(a Analyst, stream, observer, input_contents string, args map[stri
 	id := uuid.New().String()
 	logger.Debugf("", "Starting analyst run for %s/%s with ID %s", observer, stream, id)
 
-	runDir := fmt.Sprintf("/tmp/spysat/%s", id)
+	runDir := fmt.Sprintf("/tmp/whitetail/%s", id)
 	err := os.MkdirAll(runDir, 0755)
 	if err != nil {
 		logger.Errorf("", "Error creating run directory %s", err.Error())
@@ -75,7 +75,7 @@ func DoAnalyze(a Analyst, stream, observer, input_contents string, args map[stri
 
 	output, err := exec.Command(script_command[0], script_command[1:]...).Output()
 	if err != nil {
-		logger.Errorf("", "Error running script /tmp/spysat/%s/run.%s: %s", id, a.Language, err.Error())
+		logger.Errorf("", "Error running script /tmp/whitetail/%s/run.%s: %s", id, a.Language, err.Error())
 		return "", err
 	}
 

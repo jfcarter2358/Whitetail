@@ -6,6 +6,7 @@ import (
 	"whitetail/analyst"
 	"whitetail/config"
 	"whitetail/dashboard"
+	"whitetail/function"
 	"whitetail/observer"
 	"whitetail/probe"
 
@@ -17,6 +18,7 @@ type Operation struct {
 	Analysts   map[string]analyst.Analyst     `yaml:"analysts"`
 	Dashboards map[string]dashboard.Dashboard `yaml:"dashboards"`
 	Observers  map[string]observer.Observer   `yaml:"observers"`
+	Functions  map[string]function.Function   `yaml:"functions"`
 }
 
 var Operations Operation

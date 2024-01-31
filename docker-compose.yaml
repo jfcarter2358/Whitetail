@@ -6,7 +6,7 @@ services:
   ceresdb:
     image: "ceresdb"
     environment:
-      CERESDB_LOG_LEVEL: TRACE
+      CERESDB_LOG_LEVEL: INFO
     ports:
       - "0.0.0.0:7437:7437"
     tty: true

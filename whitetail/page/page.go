@@ -4,10 +4,10 @@ package page
 
 import (
 	// "log"
+
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"sort"
 	"whitetail/config"
 	"whitetail/constants"
 	"whitetail/logger"
@@ -16,12 +16,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-type GraphObj struct {
-	Observer string `json:"observer"`
-	Stream   string `json:"stream"`
-	GraphDef string `json:"graph_def"`
-}
 
 func RedirectIndexPage(c *gin.Context) {
 	c.Redirect(301, config.Config.BasePath+"/ui/home")
@@ -63,86 +57,135 @@ func ShowDashboardPage(c *gin.Context) {
 	d := operation.Operations.Dashboards[n]
 	// graphs := []GraphObj{}
 	// tableDef := []interface{}{}
-	gs := d.Layout.Graphs
-	sort.Slice(gs,
-		func(i, j int) bool {
-			return gs[i].XCoord < gs[j].YCoord
-		})
-	sort.Slice(gs,
-		func(i, j int) bool {
-			return gs[i].YCoord < gs[j].YCoord
-		})
+	// ps := d.Panels
+	// sort.Slice(ps,
+	// 	func(i, j int) bool {
+	// 		return ps[i].XCoord < ps[j].YCoord
+	// 	})
+	// sort.Slice(ps,
+	// 	func(i, j int) bool {
+	// 		return ps[i].YCoord < ps[j].YCoord
+	// 	})
+
+	// panelDef := []interface{}{}
 	// currentRow := 0
 	// row := map[string][]interface{}{[]interface{}{}}
-	def := []interface{}{}
-	rows := []float64{}
-	maxY := -1
-	for _, g := range d.Layout.Graphs {
-		if g.YCoord > maxY {
-			maxY = g.YCoord
-		}
-		b, err := json.Marshal(g)
-		if err != nil {
-			utils.Error(err, c, http.StatusServiceUnavailable)
-			return
-		}
-		var gg map[string]interface{}
-		if err := json.Unmarshal(b, &gg); err != nil {
-			utils.Error(err, c, http.StatusServiceUnavailable)
-			return
-		}
-		gg["string_def"] = string(b)
-		def = append(def, gg)
 
-		// gg := GraphObj{
-		// 	Observer: g.Observer,
-		// 	Stream:   g.Stream,
-		// 	GraphDef: string(b),
+	scripts := []string{}
+
+	panels := [][]interface{}{}
+	maxY := -1
+	maxX := -1
+	for _, p := range d.Panels {
+		logger.Tracef("", "%v", p)
+		if p.YCoord+p.RowSpan-1 > maxY {
+			maxY = p.YCoord + p.RowSpan - 1
+		}
+		if p.XCoord+p.ColSpan-1 > maxX {
+			maxX = p.XCoord + p.ColSpan - 1
+		}
+		if p.Kind == "button" {
+			script := fmt.Sprintf("<script>\n%s\n</script>", p.JS)
+			scripts = append(scripts, script)
+		}
+		// b, err := json.Marshal(p)
+		// if err != nil {
+		// 	utils.Error(err, c, http.StatusServiceUnavailable)
+		// 	return
 		// }
-		// graphs = append(graphs, gg)
-		// if g.YCoord == currentRow {
-		// col := map[string]interface{}{
-		// 	"observer": g.Observer,
-		// 	"stream":   g.Stream,
-		// 	"colspan":  g.ColSpan,
-		// 	"rowspan":  g.RowSpan,
-		// 	"width":    g.Width,
-		// 	"height":   g.Height,
+		// var pp map[string]interface{}
+		// if err := json.Unmarshal(b, &pp); err != nil {
+		// 	utils.Error(err, c, http.StatusServiceUnavailable)
+		// 	return
 		// }
-		// row[]
-		// 	row["cols"] = append(row["cols"], g)
-		// } else {
-		// 	tableDef = append(tableDef, row)
-		// 	row = nil
-		// 	row = map[string][]interface{}{"cols": []interface{}{}}
-		// }
+		// pp["string_def"] = string(b)
+		// panelDef = append(panelDef, pp)
 	}
+
+	logger.Tracef("", "max x: %d, max y: %d", maxX, maxY)
+
+	// panels := []interface{}{}
+
 	// tableDef = append(tableDef, row)
-	for i := 0; i < maxY+1; i++ {
-		rows = append(rows, float64(i))
+	for y := 0; y < maxY+1; y++ {
+		temp := []interface{}{}
+		for x := 0; x < maxX+1; x++ {
+			empty := map[string]string{"kind": "empty"}
+			temp = append(temp, empty)
+		}
+		panels = append(panels, temp)
 	}
+
+	for _, p := range d.Panels {
+		logger.Tracef("", "%v", p)
+
+		for rr := 0; rr < p.RowSpan; rr++ {
+			for cc := 0; cc < p.ColSpan; cc++ {
+				row := p.YCoord + rr
+				col := p.XCoord + cc
+				if rr == 0 && cc == 0 {
+					b, err := json.Marshal(p)
+					if err != nil {
+						utils.Error(err, c, http.StatusServiceUnavailable)
+						return
+					}
+					var pp map[string]interface{}
+					if err := json.Unmarshal(b, &pp); err != nil {
+						utils.Error(err, c, http.StatusServiceUnavailable)
+						return
+					}
+					pp["string_def"] = string(b)
+					panels[row][col] = pp
+					logger.Tracef("", "Adding %v to panels", p)
+					continue
+				}
+				null := map[string]string{"kind": "null"}
+				panels[row][col] = null
+			}
+		}
+	}
+	// 		found := false
+	// 		for _, panel := range panelDef {
+	// 			if int(panel.(map[string]interface{})["x_coord"].(float64)) == x {
+	// 				panels = append(panels, panel)
+	// 				found = true
+	// 				break
+	// 			}
+	// 		}
+	// 		if !found {
+	// 			null := map[string]string{"kind": "null"}
+	// 			panels = append(panels, null)
+	// 		}
+	// 	}
+	// 	rows = append(rows, float64(y))
+	// }
 
 	dashboards := []string{}
 	for name := range operation.Operations.Dashboards {
 		dashboards = append(dashboards, name)
 	}
 
+	b, _ := json.MarshalIndent(panels, "", "    ")
+	logger.Debugf("", "Sending panels: %s", string(b))
+
 	logger.Debugf("", "Sending dashboard data: %v", gin.H{
 		"title":      "Dashboard",
 		"location":   fmt.Sprintf("Dashboard / %s", n),
 		"dashboards": dashboards,
-		"graphs":     def,
-		"rows":       rows,
-		"version":    constants.VERSION,
+		"panels":     panels,
+		// "rows":       rows,
+		"version": constants.VERSION,
+		"scripts": scripts,
 	})
 
 	render(c, gin.H{
 		"title":      "Dashboard",
 		"location":   fmt.Sprintf("Dashboard / %s", n),
 		"dashboards": dashboards,
-		"graphs":     def,
-		"rows":       rows,
-		"version":    constants.VERSION,
+		"panels":     panels,
+		// "rows":       rows,
+		"version": constants.VERSION,
+		"scripts": scripts,
 	},
 		"dashboard.html",
 	)

@@ -17,12 +17,10 @@ const Line = class {
         this.height = init["height"]
         this.source = init["source"]
 
-        console.log(`name1: ${this.plotName}`)
-
         this.Build()
-        setTimeout(function() {
+        setInterval(function() {
             this.Update()
-        }, this.refresh)
+        }.bind(this), this.refresh)
 
     }
 
@@ -83,7 +81,7 @@ const Line = class {
             },
             error: function(data, status) {
                 console.log(data)
-                $("#error-container").text(error)
+                $("#error-container").text(data.responseText)
                 openModal('error-modal')
             }
         });
@@ -169,7 +167,7 @@ const Line = class {
         }
 
         // Plotly.redraw(`graph-${this.observer}-${this-stream}`);
-        Plotly.redraw(`graph-${this.name}`)
+        Plotly.redraw(`graph-${this.plotName}`)
     }
 
     Update() {
@@ -181,23 +179,176 @@ const Line = class {
             dataType:"json",
             success: function(data, status) {
                 this.Render(data)
-            },
+            }.bind(this),
             error: function(data, status) {
                 console.log(data)
-                $("#error-container").text(error)
+                $("#error-container").html(data.responseText)
                 openModal('error-modal')
             }
         });
-        // fetch(`/api/v1/basestation/${this.observer}/${this.stream}`)
-        // .then((response) => response.json())
-        // .then((rawData) => {
-        //     this.RenderGraph(rawData)
-        // })
-        // .catch((error) => {
-        //     console.log(error);
-        //     $("#error-container").text(error)
-        //     openModal('error-modal')
-        // });
+    }
+}
+
+const Stream = class {
+    constructor(init) {
+        this.source = init["source"]
+        this.name = init["name"]
+        this.x = init["x_coord"]
+        this.y = init["y_coord"]
+        this.rowSpan = init["row_span"]
+        this.colSpan = init["col_span"]
+        this.refresh = init["refresh"]
+        this.title = init["title"]
+
+        this.Update()
+        setInterval(function() {
+            this.Update()
+        }.bind(this), this.refresh)
+
+    }
+
+    // Build() {
+    //     var self = this;
+    //     $.ajax({
+    //         type: "POST",
+    //         url: "/api/v1/query",
+    //         data: JSON.stringify({"query": this.source}),
+    //         contentType:"application/json;",
+    //         dataType:"json",
+    //         success: function(data, status) {
+    //             let contents = ''
+    //             for (let datum of data) {
+    //                 contents += `${JSON.stringify(datum)}\n` 
+    //             }
+                
+    //             $(`#stream-${self.name}`).text(contents)
+    //         },
+    //         error: function(data, status) {
+    //             console.log(data)
+    //             $("#error-container").text(data.responseText)
+    //             openModal('error-modal')
+    //         }
+    //     });
+    // }
+
+    Render(data) {
+        let contents = ''
+        for (let datum of data) {
+            contents += `<span>${JSON.stringify(datum)}</span><br>` 
+        }
+
+        console.log(`steam contents: ${contents}`)
+        
+        $(`#stream-${this.name}`).html(contents)
+    }
+
+    Update() {
+        $.ajax({
+            type: "POST",
+            url: "/api/v1/query",
+            data: JSON.stringify({"query": this.source}),
+            contentType:"application/json;",
+            dataType:"json",
+            success: function(data, status) {
+                console.log(`Rendering stream data ${data}...`)
+                this.Render(data)
+            }.bind(this),
+            error: function(data, status) {
+                console.log(data)
+                $("#error-container").text(data.responseText)
+                openModal('error-modal')
+            }
+        });
+    }
+}
+
+const Table = class {
+    constructor(init) {
+        this.source = init["source"]
+        this.name = init["name"]
+        this.x = init["x_coord"]
+        this.y = init["y_coord"]
+        this.rowSpan = init["row_span"]
+        this.colSpan = init["col_span"]
+        this.refresh = init["refresh"]
+        this.title = init["title"]
+
+        this.Update()
+        setInterval(function() {
+            this.Update()
+        }.bind(this), this.refresh)
+
+    }
+
+    // Build() {
+    //     $.ajax({
+    //         type: "POST",
+    //         url: "/api/v1/query",
+    //         data: JSON.stringify({"query": this.source}),
+    //         contentType:"application/json;",
+    //         dataType:"json",
+    //         success: function(data, status) {
+    //             let contents = ''
+    //             contents += '<tr>'
+    //             for (let [key, _] of Object.entries(data[0])) {
+    //                 contents += `<th class="whitetail-text-brown">${key}</td>`
+    //             }
+    //             contents += '</tr>'
+    //             for (let datum of data) {
+    //                 contents += '<tr>'
+    //                 for (let [_, val] of Object.entries(datum)) {
+    //                     contents += `<td>${val}</td>`
+    //                 }
+    //                 contents += '</tr>'
+    //             }
+                
+    //             $(`#table-${this.name}`).text(contents)
+    //         },
+    //         error: function(data, status) {
+    //             console.log(data)
+    //             $("#error-container").text(data.responseText)
+    //             openModal('error-modal')
+    //         }
+    //     });
+    // }
+
+    Render(data) {
+        let contents = ''
+        contents += '<tr>'
+        for (let [key, _] of Object.entries(data[0])) {
+            contents += `<th>${key}</th>`
+        }
+        contents += '</tr>'
+        for (let datum of data) {
+            contents += '<tr>'
+            for (let [_, val] of Object.entries(datum)) {
+                contents += `<td>${val}</td>`
+            }
+            contents += '</tr>'
+        }
+
+        console.log(`table contents: ${contents}`)
+        
+        $(`#table-${this.name}`).html(contents)
+    }
+
+    Update() {
+        $.ajax({
+            type: "POST",
+            url: "/api/v1/query",
+            data: JSON.stringify({"query": this.source}),
+            contentType:"application/json;",
+            dataType:"json",
+            success: function(data, status) {
+                console.log(`Rendering table data ${data}...`)
+                this.Render(data)
+            }.bind(this),
+            error: function(data, status) {
+                console.log(data)
+                $("#error-container").text(data.responseText)
+                openModal('error-modal')
+            }
+        });
     }
 }
 
@@ -272,30 +423,77 @@ function toggleAccordion(id) {
     }
 }
 
+const Button = class {
+    constructor(init) {
+        this.source = init["source"]
+        this.name = init["name"]
+        this.callback = init["callback"]
+        this.x = init["x_coord"]
+        this.y = init["y_coord"]
+        this.rowSpan = init["row_span"]
+        this.colSpan = init["col_span"]
+        this.title = init["title"]
+        this.js = init["js"]
+
+        this.Render(this.title, this.js, this.callback)
+    }
+
+    Render(title, script, callback) {
+        console.log(`button contents: ${title}`)
+        console.log(`script contents: ${script}`)
+        
+        $(`#button-${this.name}`).html(title)
+        $(`#button-${this.name}`).attr("onClick", callback)
+        // $(`#script-${this.name}`).html(script)
+        // eval($(`#script-${this.name}`).html())
+        // $.getScript($(`#script-${this.name}`).html())
+    }
+}
+
 
 var graphs = []
+var streams = []
+var tables = []
+var buttons = []
 
 function LoadDashboard() {
     let displayTable = $("#display-table")
     let body = $(displayTable).children('tbody')[0]
     let rows = $(body).children("tr")
-    for (row of rows) {
+    for (let row of rows) {
         let cells = $(row).children('td')
-        for (cell of cells) {
+        for (let cell of cells) {
+            let divs = $(cell).children()
             let first = true
-            let divs = $(cell).children('div')
-            let graphDef = ""
-            for (div of divs) {
+            let defs = []
+            let ids = []
+            for (let div of divs) {
                 if (first) {
-                    graphDef = $(div).text()
+                    defs.push($(div).text())
                     first = false
                     continue
                 }
-                console.log(`loading graph ${$(div).attr('id')}`)
+                let id = $(div).attr('id')
+                if (id.startsWith('script-')) {
+                    continue
+                }
+                ids.push(id)
+                console.log(`loading item ${id}`)
             }
-            if (graphDef.length > 0) {
-                console.log(`graph def: ${graphDef}`)
-                graphs.push(new Line(JSON.parse(graphDef)))
+            for (let i = 0; i < defs.length; i++) {
+                let def = defs[i]
+                let id = ids[i]
+                console.log(`item def: ${def}`)
+                console.log(`item id : ${id}`)
+                if (id.startsWith('graph-')) { 
+                    graphs.push(new Line(JSON.parse(def)))
+                } else if (id.startsWith('stream-')) {
+                    streams.push(new Stream(JSON.parse(def)))
+                } else if (id.startsWith('table-')) {
+                    tables.push(new Table(JSON.parse(def)))
+                } else if (id.startsWith('button-')) {
+                    buttons.push(new Button(JSON.parse(def)))
+                }
             }
         }
     }

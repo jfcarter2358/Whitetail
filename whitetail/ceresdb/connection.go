@@ -242,7 +242,7 @@ func (cl *Collection) Upsert(filter Filter, obj interface{}) error {
 	}
 	dataString := string(dataBytes)
 
-	_, err = RawQuery(cl.Connection, cl.Auth, fmt.Sprintf("update record %s with %s where %s", cl.Name, dataString, filterString))
+	_, err = RawQuery(cl.Connection, cl.Auth, fmt.Sprintf("update record in %s with %s where %s", cl.Name, dataString, filterString))
 	return err
 }
 

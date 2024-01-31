@@ -31,8 +31,12 @@ func initializeRoutes() {
 			}
 			operationRoutes := v1Routes.Group("/operation")
 			{
-				operationRoutes.GET("/operation", api.GetOperation)
-				operationRoutes.POST("/operation", api.UpdateOperation)
+				operationRoutes.GET("/", api.GetOperation)
+				operationRoutes.POST("/", api.UpdateOperation)
+			}
+			functionRoutes := v1Routes.Group("/function")
+			{
+				functionRoutes.POST("/:name", api.RunFunction)
 			}
 			v1Routes.GET("/status", api.GetStatus)
 			v1Routes.POST("/query", api.Query)

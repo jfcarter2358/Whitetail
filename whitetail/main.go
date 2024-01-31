@@ -4,6 +4,7 @@ package main
 
 import (
 	// "os"
+	"html/template"
 	"log"
 	"whitetail/config"
 	"whitetail/datastore"
@@ -35,6 +36,13 @@ func main() {
 
 	// Set the router as the default one provided by Gin
 	router = gin.Default()
+
+	// Add unescape function
+	funcMap := template.FuncMap{}
+	funcMap["unescapeHTML"] = func(s string) template.HTML {
+		return template.HTML(s)
+	}
+	router.SetFuncMap(funcMap)
 
 	// Process the templates at the start so that they don't have to be loaded
 	// from the disk again. This makes serving HTML pages very fast.
