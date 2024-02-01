@@ -7,7 +7,7 @@ const Line = class {
         this.x = init["x"]
         this.ys = init["ys"]
         this.xAxisLabel = init["x_axis_label"]
-        this.yAxisLabels = init["y_axis_label"]
+        this.yAxisLabel = init["y_axis_label"]
         this.yLabels = init["y_labels"]
         this.title = init["title"]
         this.colors = init["colors"]
@@ -33,7 +33,16 @@ const Line = class {
             contentType:"application/json;",
             dataType:"json",
             success: function(data, status) {
-                console.log(`name2: ${self.plotName}`)
+                let theme = localStorage.getItem('whitetail-theme');
+                let bg_color = '#646464'
+                let fg_color = '#ECEFF4'
+                if (theme) {
+                    if (theme == 'light') {
+                        bg_color = '#ffffff'
+                        fg_color = '#2E3440'
+                    }
+                }
+
                 self.data = []
                 let xs = []
                 let ys = []
@@ -61,8 +70,13 @@ const Line = class {
                 }
 
                 self.layout = {
-                    title: self.title,
-                    margin: {"t": 32, "b": 32, "l": 32, "r": 32},
+                    title: {
+                        text: `<b>${self.title}</b>`,
+                        font: {
+                            color: "#8F7E4F"
+                        }
+                    },
+                    margin: {"t": 64, "b": 64, "l": 64, "r": 64},
                     // height: self.height,
                     // width: self.width,
                     autosize: true,
@@ -73,7 +87,12 @@ const Line = class {
                     },
                     yaxis: {
                         title: self.yAxisLabel
-                    }
+                    },
+                    font: {
+                        color: fg_color
+                    },
+                    plot_bgcolor: bg_color,
+                    paper_bgcolor: bg_color
                 };
 
                 // Plotly.newPlot(`graph-${this.observer}-${this.stream}`, this.data, this.layout);

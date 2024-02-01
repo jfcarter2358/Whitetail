@@ -70,7 +70,7 @@ func main() {
 			for sName, s := range o.Streams {
 				logger.Debugf("", "Checking stream %s", sName)
 				if s.Probe == pName {
-					logger.Infof("Associating probe %s with stream %s/%s", pName, oName, sName)
+					logger.Infof("", "Associating probe %s with stream %s/%s", pName, oName, sName)
 					if _, ok := probeArgs[oName]; !ok {
 						probeArgs[oName] = make(map[string]map[string]interface{})
 					}

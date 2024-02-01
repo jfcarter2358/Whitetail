@@ -173,9 +173,9 @@ func ShowDashboardPage(c *gin.Context) {
 		"location":   fmt.Sprintf("Dashboard / %s", n),
 		"dashboards": dashboards,
 		"panels":     panels,
-		// "rows":       rows,
-		"version": constants.VERSION,
-		"scripts": scripts,
+		"name":       n,
+		"version":    constants.VERSION,
+		"scripts":    scripts,
 	})
 
 	render(c, gin.H{
@@ -183,9 +183,9 @@ func ShowDashboardPage(c *gin.Context) {
 		"location":   fmt.Sprintf("Dashboard / %s", n),
 		"dashboards": dashboards,
 		"panels":     panels,
-		// "rows":       rows,
-		"version": constants.VERSION,
-		"scripts": scripts,
+		"name":       n,
+		"version":    constants.VERSION,
+		"scripts":    scripts,
 	},
 		"dashboard.html",
 	)

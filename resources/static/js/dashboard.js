@@ -122,7 +122,7 @@ const Line = class {
 var theme;
 
 $(document).ready(function() {
-    theme = localStorage.getItem('scaffold-theme');
+    theme = localStorage.getItem('whitetail-theme');
     if (theme) {
         if (theme == 'light') {
             $('.dark').addClass('light').removeClass('dark');
@@ -131,7 +131,7 @@ $(document).ready(function() {
         }
     } else {
         theme = 'light'
-        localStorage.setItem('scaffold-theme', theme);
+        localStorage.setItem('whitetail-theme', theme);
     }
 })
 
@@ -143,7 +143,7 @@ function toggleTheme() {
         theme = 'light'
         $('.dark').addClass('light').removeClass('dark');
     }
-    localStorage.setItem('scaffold-theme', theme);
+    localStorage.setItem('whitetail-theme', theme);
 }
 
 function closeModal(modalID) {

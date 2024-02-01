@@ -237,8 +237,6 @@ const Stream = class {
             contents += `<span>${JSON.stringify(datum)}</span><br>` 
         }
 
-        console.log(`steam contents: ${contents}`)
-        
         $(`#stream-${this.name}`).html(contents)
     }
 
@@ -250,7 +248,6 @@ const Stream = class {
             contentType:"application/json;",
             dataType:"json",
             success: function(data, status) {
-                console.log(`Rendering stream data ${data}...`)
                 this.Render(data)
             }.bind(this),
             error: function(data, status) {
@@ -327,8 +324,6 @@ const Table = class {
             contents += '</tr>'
         }
 
-        console.log(`table contents: ${contents}`)
-        
         $(`#table-${this.name}`).html(contents)
     }
 
@@ -340,7 +335,6 @@ const Table = class {
             contentType:"application/json;",
             dataType:"json",
             success: function(data, status) {
-                console.log(`Rendering table data ${data}...`)
                 this.Render(data)
             }.bind(this),
             error: function(data, status) {
@@ -355,7 +349,7 @@ const Table = class {
 var theme;
 
 $(document).ready(function() {
-    theme = localStorage.getItem('scaffold-theme');
+    theme = localStorage.getItem('whitetail-theme');
     if (theme) {
         if (theme == 'light') {
             $('.dark').addClass('light').removeClass('dark');
@@ -364,7 +358,7 @@ $(document).ready(function() {
         }
     } else {
         theme = 'light'
-        localStorage.setItem('scaffold-theme', theme);
+        localStorage.setItem('whitetail-theme', theme);
     }
 })
 
@@ -376,7 +370,7 @@ function toggleTheme() {
         theme = 'light'
         $('.dark').addClass('light').removeClass('dark');
     }
-    localStorage.setItem('scaffold-theme', theme);
+    localStorage.setItem('whitetail-theme', theme);
 }
 
 function closeModal(modalID) {
@@ -439,14 +433,8 @@ const Button = class {
     }
 
     Render(title, script, callback) {
-        console.log(`button contents: ${title}`)
-        console.log(`script contents: ${script}`)
-        
         $(`#button-${this.name}`).html(title)
         $(`#button-${this.name}`).attr("onClick", callback)
-        // $(`#script-${this.name}`).html(script)
-        // eval($(`#script-${this.name}`).html())
-        // $.getScript($(`#script-${this.name}`).html())
     }
 }
 
@@ -478,13 +466,10 @@ function LoadDashboard() {
                     continue
                 }
                 ids.push(id)
-                console.log(`loading item ${id}`)
             }
             for (let i = 0; i < defs.length; i++) {
                 let def = defs[i]
                 let id = ids[i]
-                console.log(`item def: ${def}`)
-                console.log(`item id : ${id}`)
                 if (id.startsWith('graph-')) { 
                     graphs.push(new Line(JSON.parse(def)))
                 } else if (id.startsWith('stream-')) {

@@ -22,7 +22,7 @@ func Init() error {
 	Database = c.Databases[config.Config.CeresDBDatabaseName]
 	if _, err := c.Database(config.Config.CeresDBDatabaseName); err != nil {
 		if _, ok := err.(*ceresdb.DatabaseExists); !ok {
-			return err
+			return nil
 		}
 	}
 
@@ -34,7 +34,7 @@ func AddStream(oo, ss string, o observer.Observer) error {
 	cl, err := Database.Collection(fmt.Sprintf("%s__%s", oo, ss), o.Streams[ss].Schema)
 	if err != nil {
 		if _, ok := err.(*ceresdb.CollectionExists); !ok {
-			return err
+			return nil
 		}
 	}
 	Database.Collections[fmt.Sprintf("%s__%s", oo, ss)] = cl

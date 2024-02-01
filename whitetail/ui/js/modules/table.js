@@ -50,7 +50,7 @@ const Table = class {
 
     Render(data) {
         let contents = ''
-        contents += '<tr>'
+        contents += '<tr style="color:#000!important;background-color:#8F7E4F!important;">'
         for (let [key, _] of Object.entries(data[0])) {
             contents += `<th>${key}</th>`
         }
@@ -63,8 +63,6 @@ const Table = class {
             contents += '</tr>'
         }
 
-        console.log(`table contents: ${contents}`)
-        
         $(`#table-${this.name}`).html(contents)
     }
 
@@ -76,7 +74,6 @@ const Table = class {
             contentType:"application/json;",
             dataType:"json",
             success: function(data, status) {
-                console.log(`Rendering table data ${data}...`)
                 this.Render(data)
             }.bind(this),
             error: function(data, status) {

@@ -14,13 +14,7 @@ const Button = class {
     }
 
     Render(title, script, callback) {
-        console.log(`button contents: ${title}`)
-        console.log(`script contents: ${script}`)
-        
         $(`#button-${this.name}`).html(title)
         $(`#button-${this.name}`).attr("onClick", callback)
-        // $(`#script-${this.name}`).html(script)
-        // eval($(`#script-${this.name}`).html())
-        // $.getScript($(`#script-${this.name}`).html())
     }
 }

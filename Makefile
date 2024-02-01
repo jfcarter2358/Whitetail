@@ -17,4 +17,8 @@ run-docker:  ## Run local docker-compose
 	docker-compose rm -f
 	docker-compose up
 
+build-local: clean
+	mkdir dist
+	cd whitetail && env GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -v -o whitetail
+	mv whitetail/whitetail dist/whitetail
 

@@ -13,7 +13,6 @@ function query() {
         contentType:"application/json;",
         dataType:"json",
         success: function(data, status) {
-            console.log(data)
             logOut = ''
             if (data != null) {
                 for (var i = 0; i < data.length; i++) {

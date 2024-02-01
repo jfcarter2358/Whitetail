@@ -33,13 +33,10 @@ function LoadDashboard() {
                     continue
                 }
                 ids.push(id)
-                console.log(`loading item ${id}`)
             }
             for (let i = 0; i < defs.length; i++) {
                 let def = defs[i]
                 let id = ids[i]
-                console.log(`item def: ${def}`)
-                console.log(`item id : ${id}`)
                 if (id.startsWith('graph-')) { 
                     graphs.push(new Line(JSON.parse(def)))
                 } else if (id.startsWith('stream-')) {

@@ -46,8 +46,6 @@ const Stream = class {
             contents += `<span>${JSON.stringify(datum)}</span><br>` 
         }
 
-        console.log(`steam contents: ${contents}`)
-        
         $(`#stream-${this.name}`).html(contents)
     }
 
@@ -59,7 +57,6 @@ const Stream = class {
             contentType:"application/json;",
             dataType:"json",
             success: function(data, status) {
-                console.log(`Rendering stream data ${data}...`)
                 this.Render(data)
             }.bind(this),
             error: function(data, status) {
